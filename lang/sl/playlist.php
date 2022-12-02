@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'about'             => 'Tukaj boste našli uporabniško sestavljene sezname predvajanja, ki vsebujejo naslove po njihovem okusu!',
+    'attached-success'  => 'Torrent je bil uspešno pripet na vaš seznam predvajanja.',
+    'add-to-playlist'   => 'Dodaj Torrent na seznam predvajanja',
+    'add-torrent'       => 'Dodaj Torrent',
+    'added-by'          => 'Avtor:',
+    'cover'             => 'Izberite naslovno sliko',
+    'create'            => 'Ustvari nov seznam predvajanja',
+    'delete-playlist'   => 'Izbriši seznam predvajanja',
+    'deleted'           => 'Seznam predvajanja je izbrisan!',
+    'detached-success'  => 'Torrent je bil uspešno odstranjen z vašega seznama predvajanja.',
+    'desc'              => 'Opis seznama predvajanja',
+    'download-all'      => 'Prenesite vse torrente seznama predvajanja',
+    'edit-playlist'     => 'Uredi seznam predvajanja',
+    'list-by'           => 'Seznam, ki ga je izdelal:',
+    'list-about'        => 'Seznam o:',
+    'private-error'     => 'To je zasebni seznam predvajanja! Nimate dostopa do drugih uporabnikov zasebni seznami predvajanja!',
+    'published-success' => 'Vaš seznam predvajanja je bil uspešno ustvarjen!',
+    'is-private'        => 'Zasebni seznam predvajanja?',
+    'playlists'         => 'Seznami predvajanja',
+    'title'             => 'Naslov',
+    'titles'            => 'Naslovi',
+    'update-success'    => 'Vaš seznam predvajanja je bil uspešno posodobljen!',
+];

@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Controllers\Staff;
+
+use App\Http\Controllers\Controller;
+use App\Jobs\ProcessMassPM;
+use App\Models\Group;
+use App\Models\User;
+use Illuminate\Http\Request;
+
+/**
+ * @see \Tests\Feature\Http\Controllers\Staff\MassActionControllerTest
+ */
+class MassActionController extends Controller
+{
+    /**
+     * @var int
+     */
+    private const SENDER_ID = 1;
+
+    /**
+     * Mass PM Form.
+     */
+    public function create(): \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+    {
+        return \view('Staff.masspm.index');
+    }
+
+    /**
+     * Send The Mass PM.
+     *
+     * @throws \Exception
+     */
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $bannedGroup = \cache()->rememberForever('banned_group', fn () => Group::where('slug', '=', 'banned')->pluck('id'));
+        $validatingGroup = \cache()->rememberForever('validating_group', fn () => Group::where('slug', '=', 'validating')->pluck('id'));
+        $disabledGroup = \cache()->rememberForever('disabled_group', fn () => Group::where('slug', '=', 'disabled')->pluck('id'));
+        $prunedGroup = \cache()->rememberForever('pruned_group', fn () => Group::where('slug', '=', 'pruned')->pluck('id'));
+        $users = User::whereIntegerNotInRaw('group_id', [$validatingGroup[0], $bannedGroup[0], $disabledGroup[0], $prunedGroup[0]])->pluck('id');
+
+        $subject = $request->input('subject');
+        $message = $request->input('message');
+
+        $v = \validator($request->all(), [
+            'subject' => 'required|min:5',
+            'message' => 'required|min:5',
+        ]);
+
+        if ($v->fails()) {
+            return \to_route('staff.mass-pm.create')
+                ->withErrors($v->errors());
+        }
+
+        foreach ($users as $userId) {
+            ProcessMassPM::dispatch(self::SENDER_ID, $userId, $subject, $message);
+        }
+
+        return \to_route('staff.mass-pm.create')
+            ->withSuccess('MassPM Poslano');
+    }
+
+    /**
+     * Mass Validate Unvalidated Users.
+     *
+     * @throws \Exception
+     */
+    public function update(): \Illuminate\Http\RedirectResponse
+    {
+        $validatingGroup = \cache()->rememberForever('validating_group', fn () => Group::where('slug', '=', 'validating')->pluck('id'));
+        $memberGroup = \cache()->rememberForever('member_group', fn () => Group::where('slug', '=', 'user')->pluck('id'));
+        foreach (User::where('group_id', '=', $validatingGroup[0])->get() as $user) {
+            $user->group_id = $memberGroup[0];
+            $user->active = 1;
+            $user->can_upload = 1;
+            $user->can_download = 1;
+            $user->can_request = 1;
+            $user->can_comment = 1;
+            $user->can_invite = 1;
+            $user->save();
+        }
+
+        return \to_route('staff.dashboard.index')
+            ->withSuccess('Nepotrjeni računi so zdaj potrjeni');
+    }
+}

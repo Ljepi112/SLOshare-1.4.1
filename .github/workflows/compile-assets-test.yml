@@ -1,0 +1,16 @@
+name: Compile Assets Tests
+
+on:
+  - push
+
+jobs:
+  build-assets:
+    name: Build JS/CSS Assets
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Start NPM
+        run: |
+          npm install
+          npx mix -p
+          cat public/mix-manifest.json # See asset versions in log

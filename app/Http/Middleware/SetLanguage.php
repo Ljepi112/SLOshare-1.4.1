@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Models\Language;
+use Closure;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
+
+class SetLanguage
+{
+    /**
+     * This function checks if language to set is an allowed lang of config.
+     */
+    private function setLocale(string $locale): void
+    {
+        // Check if is allowed and set default locale if not
+        if (! Language::allowed($locale)) {
+            $locale = \config('app.locale');
+        }
+
+        // Set app language
+        App::setLocale($locale);
+
+        // Set carbon language
+        if (\config('language.carbon')) {
+            // Carbon uses only language code
+            if (\config('language.mode.code') == 'long') {
+                $locale = \explode('-', (string) $locale)[0];
+            }
+
+            Carbon::setLocale($locale);
+        }
+
+        // Set date language
+        if (\config('language.date')) {
+            // Date uses only language code
+            if (\config('language.mode.code') == 'long') {
+                $locale = \explode('-', (string) $locale)[0];
+            }
+
+            \Date::setLocale($locale);
+        }
+    }
+
+    public function setDefaultLocale(): void
+    {
+        $this->setLocale(\config('app.locale'));
+    }
+
+    public function setUserLocale(): void
+    {
+        $user = \auth()->user();
+
+        if ($user->locale) {
+            $this->setLocale($user->locale);
+        } else {
+            $this->setDefaultLocale();
+        }
+    }
+
+    public function setSystemLocale($request): void
+    {
+        if ($request->session()->has('locale')) {
+            $this->setLocale(\session('locale'));
+        } else {
+            $this->setDefaultLocale();
+        }
+    }
+
+    /**
+     * Handle an incoming request.
+     */
+    public function handle(\Illuminate\Http\Request $request, Closure $next): mixed
+    {
+        if ($request->has('lang')) {
+            $this->setLocale($request->get('lang'));
+        } elseif (\auth()->check()) {
+            $this->setUserLocale();
+        } else {
+            $this->setSystemLocale($request);
+        }
+
+        return $next($request);
+    }
+}
