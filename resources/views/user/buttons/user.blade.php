@@ -6,7 +6,6 @@
 <li class="nav-tab-menu">
     <a
         class="{{ Route::is('users.show', 'user_edit_profile_form') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
-        href="{{ route('users.show', ['username' => $user->username]) }}"
     >
         {{ __('user.profile') }}
     </a>
@@ -19,7 +18,6 @@
                 {{ __('user.profile') }}
             </a>
         </li>
-        @if ($isModo)
             <li class="{{ Route::is('user_edit_profile_form') ? 'nav-tab--active' : 'nav-tavV2' }}">
                 <a
                     class="{{ Route::is('user_edit_profile_form') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
@@ -28,6 +26,7 @@
                     {{ __('user.edit-profile') }}
                 </a>
             </li>
+        @if ($isModo)
             @if(auth()->user()->hidden)
                 <form
                     method="POST"
@@ -98,7 +97,7 @@
             @endif
         @else
             <li class="nav-tabV2">
-                @if (auth()->user()->isFollowing($user->id))
+                @if (auth()->user()->follows()->following($user->id)->exists())
                     <form
                         action="{{ route('follow.destroy', ['username' => $user->username]) }}"
                         method="POST"
@@ -135,11 +134,11 @@
     <li class="nav-tab-menu">
         <a
             class="{{ Route::is('user_settings', 'user_security', 'user_privacy', 'user_notification') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
-            href="{{ route('user_security', ['username' => $user->username]) }}"
         >
             {{ __('user.settings') }}
         </a>
         <ul class="nav-tab-menu__items">
+@if ($isModo)
             <li class="{{ Route::is('user_settings') ? 'nav-tab--active' : 'nav-tavV2' }}">
                 <a
                     class="{{ Route::is('user_settings') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
@@ -148,6 +147,7 @@
                     {{ __('user.general') }}
                 </a>
             </li>
+@endif
             <li class="{{ Route::is('user_security') ? 'nav-tab--active' : 'nav-tavV2' }}">
                 <a
                     class="{{ Route::is('user_security') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
@@ -156,6 +156,7 @@
                     {{ __('user.security') }}
                 </a>
             </li>
+@if ($isModo)
             <li class="{{ Route::is('user_privacy') ? 'nav-tab--active' : 'nav-tavV2' }}">
                 <a
                     class="{{ Route::is('user_privacy') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
@@ -172,6 +173,7 @@
                     {{ __('user.notification') }}
                 </a>
             </li>
+@endif
         </ul>
     </li>
 @endif
@@ -267,6 +269,7 @@
             {{ __('forum.activity') }}
         </span>
         <ul class="nav-tab-menu__items">
+@if ($isModo)
             @if (auth()->user()->isAllowed($user, 'achievement', 'show_achievement'))
                 <li class="{{ Route::is('achievements.show') ? 'nav-tab--active' : 'nav-tavV2' }}">
                     <a
@@ -277,6 +280,7 @@
                     </a>
                 </li>
             @endif
+@endif
             @if (auth()->user()->isAllowed($user, 'forum', 'show_topic'))
                 <li class="{{ Route::is('user_topics') ? 'nav-tab--active' : 'nav-tavV2' }}">
                     <a
@@ -310,7 +314,7 @@
         </ul>
     </li>
 @endif
-@if ($isProfileOwner || $isModo)
+@if ($isModo)
     <li class="nav-tab-menu">
         <a
             class="{{ Route::is('earnings.index', 'transactions.create', 'gifts.index', 'gifts.create', 'tips.index') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
@@ -371,6 +375,8 @@
                         {{ __('user.wishlist') }}
                     </a>
                 </li>
+				@endif
+@if ($isModo)
                 <li class="{{ Route::is('seedboxes.index') ? 'nav-tab--active' : 'nav-tavV2' }}">
                     <a
                         class="{{ Route::is('seedboxes.index') ? 'nav-tab--active__link' : 'nav-tab__link' }}"
@@ -387,7 +393,7 @@
                         {{ __('user.invites') }}
                     </a>
                 </li>
-            @endif
+
             @if ($isProfileOwner)
                 <li class="{{ Route::is('invites.create') ? 'nav-tab--active' : 'nav-tavV2' }}">
                     <a
@@ -398,6 +404,7 @@
                     </a>
                 </li>
             @endif
+@endif
         </ul>
     </li>
 @endif

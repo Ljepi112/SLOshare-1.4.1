@@ -61,7 +61,7 @@
                 <li><a href="">{{ __('common.shop-sloshare') }}</a></li>
                 <li><a href="">{{ __('common.radio-sloshare') }}</a></li>
             @endif
-                <li><a href="{{ route('blacklist') }}">{{ __('common.blacklist') }}</a></li>
+                <li><a href="{{ route('client_blacklist') }}">{{ __('common.blacklist') }}</a></li>
                 <li><a href="{{ route('staff') }}">{{ __('common.staff') }}</a></li>
             @if (auth()->user()->group->is_admin)
                 <li><a href="{{ route('about') }}">{{ __('common.about') }}</a></li>
@@ -84,7 +84,7 @@
                         ⚠️ Vsebina katera je na SLOshare.eu se ne sme prenalagati na druge trackerje ⚠️
                         </div>
                         <p>Poganja ga SLOshare.eu  ©2021 - {{ date('Y') }}</p>
-                        <p>Čas nalaganja {{ number_format(microtime(true) - LARAVEL_START, 3) }} s </p>
+                        <p>Upodabljanje te strani je trajalo {{ number_format(microtime(true) - (defined('LARAVEL_START') ? LARAVEL_START : request()->server('REQUEST_TIME_FLOAT')), 3) }} sekund in {{ number_format(memory_get_peak_usage(true) / 1024 / 1024, 2) }} MB pomnilnika </p>
                     </span>
                 </div>
             </div>

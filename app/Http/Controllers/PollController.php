@@ -78,7 +78,7 @@ class PollController extends Controller
         $profileUrl = \href_profile($user);
 
         $this->chatRepository->systemMessage(
-            \sprintf('[url=%s]%s[/url] has voted on poll [url=%s]%s[/url]', $profileUrl, $user->username, $pollUrl, $poll->title)
+            \sprintf('[url=%s]%s[/url] je glasoval v anketi [url=%s]%s[/url]', $profileUrl, $user->username, $pollUrl, $poll->title)
         );
 
         return \to_route('poll_results', ['id' => $poll->id])

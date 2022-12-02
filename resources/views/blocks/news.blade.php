@@ -1,4 +1,5 @@
-<div class="col-md-3 col-sm-3-slo col-md-bl-1 col-slo-news">
+<aside>
+	<section class="panelV2">
 @foreach ($articles as $article)
             <div class="panel panel-danger">
                 <div class="nav nav-tabs-user">
@@ -11,7 +12,7 @@
                 <div class="panel-body no-padding">
                     <p class="text-muted" style="padding-bottom: 4px;">
                         <em>{{ __('articles.published-at') }}
-                            {{ date('d.m.Y', $article->created_at->getTimestamp()) }} | {{ date('H:m:s', $article->created_at->getTimestamp()) }}
+                            {{ $article->created_at->format('d.m.Y') }} | {{ $article->created_at->format('H:m:s') }}
                         </em>
                     </p>
                     <!--Body-->
@@ -25,9 +26,7 @@
                             @endif
                             </a>
                         </div>
-                        <div class="newbodytext">
-                            @joypixels(preg_replace('#\[[^\]]+\]#', '', Str::limit($article->content, 120)))
-                        </div>
+                            @joypixels(preg_replace('#\[[^\]]+\]#', '', Str::limit($article->content, 160)))
                     </div>
                     <!--Body-->
                     <!--Footer-->
@@ -49,4 +48,5 @@
                 </div>
             </div>
 @endforeach
-</div>
+	</section>
+</aside>

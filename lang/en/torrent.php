@@ -247,5 +247,6 @@ return [
     'collection-of-movies'     => 'Collection of Movies',
     'collection-of-tv'         => 'Collection of TV',
     'collection-of-cartoons'   => 'Collection of Cartoons',
+    'collection-of-cartoontvs' => 'Collection of Cartoons TV',
     'playlists'                => 'Playlists',
 ];

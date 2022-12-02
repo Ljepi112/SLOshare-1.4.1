@@ -68,4 +68,23 @@ mix.options({
     .js('resources/js/sloshare/imgbb.js', 'public/js')
     .js('resources/js/vendor/alpine.js', 'public/js')
     .js('resources/js/vendor/virtual-select.js', 'public/js')
-    .js('resources/js/sloshare/chat.js', 'public/js');
+    .js('resources/js/sloshare/chat.js', 'public/js')
+
+    /*
+     * Snowfall JS login page
+     */
+    .js('resources/js/snowfall/jquery.snowfall.js', 'public/js')
+    .js('resources/js/snowfall/jquery-1.12.4.js', 'public/js')
+    .js('resources/js/snowfall/snowfall.js', 'public/js')
+    .sass('resources/sass/snowfall/font-awesome.scss', 'public/css/snowfall/font-awesome.css')
+    .sass('resources/sass/snowfall/jqueryscripttop.scss', 'public/css/snowfall/jqueryscripttop.css')
+
+    /*
+     * Google JS login page
+     */
+    .js('resources/js/sloshare/google.js', 'public/js')
+
+    /*
+     * AD JS login page
+     */
+    .js('resources/js/sloshare/ad.js', 'public/js');

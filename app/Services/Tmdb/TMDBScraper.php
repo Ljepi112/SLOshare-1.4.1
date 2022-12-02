@@ -7,11 +7,13 @@ use App\Jobs\ProcessCompanyJob;
 use App\Jobs\ProcessMovieJob;
 use App\Jobs\ProcessCartoonJob;
 use App\Jobs\ProcessTvJob;
+use App\Jobs\ProcessCartoontvJob;
 use App\Models\Collection;
 use App\Models\Company;
 use App\Models\Movie;
 use App\Models\Cartoon;
 use App\Models\Tv;
+use App\Models\Cartoontv;
 use DateTime;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\Request;
@@ -70,6 +72,46 @@ class TMDBScraper implements ShouldQueue
             ProcessTvJob::dispatch($tv, $id);
 
             //return ['message' => 'Tv with id: ' . $id . ' Has been added  to the database, But episodes are loaded with the queue'];
+        }
+    }
+
+    public function cartoontv($id = null): void
+    {
+        if ($id == null) {
+            $id = $this->id;
+        }
+
+        $tmdb = new TMDB();
+        $cartoontv = (new Client\TV($id))->getData();
+        if (isset($cartoontv['id'])) {
+            $array = [
+                'backdrop'           => $tmdb->image('backdrop', $cartoontv),
+                'episode_run_time'   => $tmdb->ifHasItems('episode_run_time', $cartoontv),
+                'first_air_date'     => $tmdb->ifExists('first_air_date', $cartoontv),
+                'homepage'           => $cartoontv['homepage'],
+                'imdb_id'            => \substr($cartoontv['external_ids']['imdb_id'] ?? '', 2),
+                'in_production'      => $cartoontv['in_production'],
+                'last_air_date'      => $tmdb->ifExists('last_air_date', $cartoontv),
+                'name'               => Str::limit($cartoontv['name'], 200),
+                'name_sort'          => \addslashes(\str_replace(['The ', 'An ', 'A ', '"'], [''], Str::limit($cartoontv['name'], 100))),
+                'number_of_episodes' => $cartoontv['number_of_episodes'],
+                'number_of_seasons'  => $cartoontv['number_of_seasons'],
+                'origin_country'     => $tmdb->ifHasItems('origin_country', $cartoontv),
+                'original_language'  => $cartoontv['original_language'],
+                'original_name'      => $cartoontv['original_name'],
+                'overview'           => $cartoontv['overview'],
+                'popularity'         => $cartoontv['popularity'],
+                'poster'             => $tmdb->image('poster', $cartoontv),
+                'status'             => $cartoontv['status'],
+                'vote_average'       => $cartoontv['vote_average'],
+                'vote_count'         => $cartoontv['vote_count'],
+            ];
+
+            Cartoontv::updateOrCreate(['id' => $id], $array);
+
+            ProcessCartoontvJob::dispatch($cartoontv, $id);
+
+            //return ['message' => 'CartoonTv with id: ' . $id . ' Has been added  to the database, But episodes are loaded with the queue'];
         }
     }
 

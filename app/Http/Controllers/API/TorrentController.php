@@ -141,7 +141,7 @@ class TorrentController extends BaseController
         }
 
         $resolutionRule = 'nullable|exists:resolutions,id';
-        if ($category->movie_meta || $category->tv_meta || $category->cartoon_meta) {
+        if ($category->movie_meta || $category->tv_meta || $category->cartoon_meta || $category->cartoontv_meta) {
             $resolutionRule = 'required|exists:resolutions,id';
         }
 
@@ -152,6 +152,16 @@ class TorrentController extends BaseController
 
         $seasonRule = 'nullable|numeric';
         if ($category->tv_meta) {
+            $seasonRule = 'required|numeric';
+        }
+
+        $episodeRule = 'nullable|numeric';
+        if ($category->cartoontv_meta) {
+            $episodeRule = 'required|numeric';
+        }
+
+        $seasonRule = 'nullable|numeric';
+        if ($category->cartoontv_meta) {
             $seasonRule = 'required|numeric';
         }
 
@@ -197,6 +207,11 @@ class TorrentController extends BaseController
             return $this->sendError('Napaka pri preverjanju.', $v->errors());
         }
 
+        // Torrent FL 100%
+        if (config('torrent.size_freeleech') == true && $torrent->size >= \config('torrent.size_threshold')) {
+            $torrent->free = 100;
+        }
+
         // Save The Torrent
         $torrent->save();
         // Set torrent to featured
@@ -231,6 +246,10 @@ class TorrentController extends BaseController
 
         if ($torrent->category->cartoon_meta && ($torrent->tmdb || $torrent->tmdb != 0)) {
             $tmdbScraper->cartoon($torrent->tmdb);
+        }
+
+        if ($torrent->category->cartoontv_meta && ($torrent->tmdb || $torrent->tmdb != 0)) {
+            $tmdbScraper->cartoontv($torrent->tmdb);
         }
 
         // Torrent Keywords System
@@ -358,7 +377,7 @@ class TorrentController extends BaseController
             ->when($request->filled('malId'), fn ($query) => $query->ofMal((int) $request->malId))
             ->when($request->filled('playlistId'), fn ($query) => $query->ofPlaylist((int) $request->playlistId))
             ->when($request->filled('collectionId'), fn ($query) => $query->ofCollection((int) $request->collectionId))
-            ->when($request->filled('free'), fn ($query) => $query->ofFreeleech([25, 50, 75, 100]))
+            ->when($request->filled('free'), fn ($query) => $query->ofFreeleech($request->free))
             ->when($request->filled('doubleup'), fn ($query) => $query->doubleup())
             ->when($request->filled('featured'), fn ($query) => $query->featured())
             ->when($request->filled('stream'), fn ($query) => $query->streamOptimized())

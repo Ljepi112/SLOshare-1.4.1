@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Ticket;
 use App\Models\TicketAttachment;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -45,8 +46,13 @@ class AttachmentUpload extends Component
         $this->dispatchBrowserEvent('success', ['type' => 'success',  'message' => 'Priloga napake je bila uspešno naložena!']);
     }
 
+    final public function getAttachmentsProperty(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Ticket::find($this->ticket)->attachments;
+    }
+
     final public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
-        return \view('livewire.attachment-upload');
+        return \view('livewire.attachment-upload', ['attachments' => $this->attachments]);
     }
 }

@@ -33,6 +33,7 @@ class ProcessCollectionJob implements ShouldQueue
             $metadata->movie($parts['id']);
             $metadata->tv($parts['id']);
             $metadata->cartoon($parts['id']);
+            $metadata->cartoontv($parts['id']);
         }
     }
 }

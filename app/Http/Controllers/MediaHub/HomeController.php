@@ -11,6 +11,7 @@ use App\Models\Cartoon;
 use App\Models\Network;
 use App\Models\Person;
 use App\Models\Tv;
+use App\Models\Cartoontv;
 
 class HomeController extends Controller
 {
@@ -20,6 +21,7 @@ class HomeController extends Controller
     public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     {
         $tv = Tv::count();
+        $cartoontv = Cartoontv::count();
         $movies = Movie::count();
         $cartoons = Cartoon::count();
         $collections = Collection::count();
@@ -30,6 +32,7 @@ class HomeController extends Controller
 
         return \view('mediahub.index', [
             'tv'          => $tv,
+            'cartoontv'   => $cartoontv,
             'movies'      => $movies,
             'cartoons'    => $cartoons,
             'collections' => $collections,

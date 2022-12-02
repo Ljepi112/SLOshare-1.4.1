@@ -35,4 +35,7 @@ return [
     'cartoons'              => 'Risanke',
     'cartoon'               => 'Risanka',
     'cartoon-credits'       => 'Zasluge Risank:',
+    'cartoontvs'            => 'Risanke TV',
+    'cartoontv'             => 'Risanka TV',
+    'cartoontv-credits'     => 'Zasluge Risank TV:',
 ];

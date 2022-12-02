@@ -6,6 +6,7 @@ use App\Models\Movie;
 use App\Models\Cartoon;
 use App\Models\Torrent;
 use App\Models\Tv;
+use App\Models\Cartoontv;
 
 class SimilarTorrentController extends Controller
 {
@@ -31,6 +32,10 @@ class SimilarTorrentController extends Controller
 
         if ($torrent->category->cartoon_meta) {
             $meta = Cartoon::with('genres', 'cast', 'companies', 'collection')->where('id', '=', $tmdbId)->first();
+        }
+
+        if ($torrent->category->cartoontv_meta) {
+            $meta = Cartoontv::with('genres', 'cast', 'companies', 'collection')->where('id', '=', $tmdbId)->first();
         }
 
         return \view('torrent.similar', [

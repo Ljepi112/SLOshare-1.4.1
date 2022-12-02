@@ -125,7 +125,7 @@ Route::group(['middleware' => 'language'], function () {
             Route::get('/staff', [App\Http\Controllers\PageController::class, 'staff'])->name('staff');
             Route::get('/users', [App\Http\Controllers\PageController::class, 'users'])->name('users');
             Route::get('/internal', [App\Http\Controllers\PageController::class, 'internal'])->name('internal');
-            Route::get('/blacklist', [App\Http\Controllers\PageController::class, 'blacklist'])->name('blacklist');
+            Route::get('/blacklist/clients', [App\Http\Controllers\PageController::class, 'clientblacklist'])->name('client_blacklist');
             Route::get('/chat', [App\Http\Controllers\PageController::class, 'chat'])->name('chat');
             Route::get('/aboutus', [App\Http\Controllers\PageController::class, 'about'])->name('about');
             Route::get('/faq', [App\Http\Controllers\PageController::class, 'faqs'])->name('faqs');
@@ -135,19 +135,6 @@ Route::group(['middleware' => 'language'], function () {
             Route::get('/conditionsofuse', [App\Http\Controllers\PageController::class, 'conditionsofuses'])->name('conditionsofuses');
             Route::get('/donationslo', [App\Http\Controllers\PageController::class, 'donationslos'])->name('donationslos');
             Route::get('/{id}', [App\Http\Controllers\PageController::class, 'show'])->where('id', '[0-9]+')->name('pages.show');
-        });
-
-        // Comments System
-        Route::group(['prefix' => 'comments'], function () {
-            Route::post('/article/{id}', [App\Http\Controllers\CommentController::class, 'article'])->name('comment_article');
-            Route::post('/torrent/{id}', [App\Http\Controllers\CommentController::class, 'torrent'])->name('comment_torrent');
-            Route::post('/thanks/{id}', [App\Http\Controllers\CommentController::class, 'quickthanks'])->name('comment_thanks');
-            Route::post('/request/{id}', [App\Http\Controllers\CommentController::class, 'request'])->name('comment_request');
-            Route::post('/playlist/{id}', [App\Http\Controllers\CommentController::class, 'playlist'])->name('comment_playlist');
-            Route::post('/collection/{id}', [App\Http\Controllers\CommentController::class, 'collection'])->name('comment_collection');
-            Route::post('/ticket/{id}', [App\Http\Controllers\CommentController::class, 'ticket'])->name('comment_ticket');
-            Route::post('/edit/{comment_id}', [App\Http\Controllers\CommentController::class, 'editComment'])->name('comment_edit');
-            Route::delete('/delete/{comment_id}', [App\Http\Controllers\CommentController::class, 'deleteComment'])->name('comment_delete');
         });
 
         // Extra-Stats System
@@ -638,6 +625,30 @@ Route::group(['middleware' => 'language'], function () {
             });
         });
 
+        // Blacklist System
+        Route::group(['prefix' => 'blacklists'], function () {
+            Route::name('staff.blacklists.clients.')->group(function () {
+                Route::get('/clients', [App\Http\Controllers\Staff\BlacklistClientController::class, 'index'])->name('index');
+                Route::get('/clients/create', [App\Http\Controllers\Staff\BlacklistClientController::class, 'create'])->name('create');
+                Route::post('/clients/store', [App\Http\Controllers\Staff\BlacklistClientController::class, 'store'])->name('store');
+                Route::get('/clients/{id}/edit', [App\Http\Controllers\Staff\BlacklistClientController::class, 'edit'])->name('edit');
+                Route::patch('/clients/{id}/update', [App\Http\Controllers\Staff\BlacklistClientController::class, 'update'])->name('update');
+                Route::delete('/clients/{id}/destroy', [App\Http\Controllers\Staff\BlacklistClientController::class, 'destroy'])->name('destroy');
+            });
+        });
+
+        // VideoHome System
+        Route::group(['prefix' => 'homes'], function () {
+            Route::name('staff.homes.videos.')->group(function () {
+                Route::get('/videos', [App\Http\Controllers\Staff\HomeVideoController::class, 'index'])->name('index');
+                Route::get('/videos/create', [App\Http\Controllers\Staff\HomeVideoController::class, 'create'])->name('create');
+                Route::post('/videos/store', [App\Http\Controllers\Staff\HomeVideoController::class, 'store'])->name('store');
+                Route::get('/videos/{id}/edit', [App\Http\Controllers\Staff\HomeVideoController::class, 'edit'])->name('edit');
+                Route::patch('/videos/{id}/update', [App\Http\Controllers\Staff\HomeVideoController::class, 'update'])->name('update');
+                Route::delete('/videos/{id}/destroy', [App\Http\Controllers\Staff\HomeVideoController::class, 'destroy'])->name('destroy');
+            });
+        });
+
         // Bon Exchanges
         Route::group(['prefix' => 'bon-exchanges'], function () {
             Route::name('staff.bon_exchanges.')->group(function () {
@@ -695,6 +706,15 @@ Route::group(['middleware' => 'language'], function () {
                 Route::get('/statuses/{id}/edit', [App\Http\Controllers\Staff\ChatStatusController::class, 'edit'])->name('edit');
                 Route::post('/statuses/{id}/update', [App\Http\Controllers\Staff\ChatStatusController::class, 'update'])->name('update');
                 Route::delete('/statuses/{id}/destroy', [App\Http\Controllers\Staff\ChatStatusController::class, 'destroy'])->name('destroy');
+            });
+        });
+
+        // Cheated Torrents
+        Route::group(['prefix' => 'cheated-torrents'], function () {
+            Route::name('staff.cheated_torrents.')->group(function () {
+                Route::get('/', [App\Http\Controllers\Staff\CheatedTorrentController::class, 'index'])->name('index');
+                Route::delete('/{id}', [App\Http\Controllers\Staff\CheatedTorrentController::class, 'destroy'])->name('destroy');
+                Route::delete('/', [App\Http\Controllers\Staff\CheatedTorrentController::class, 'massDestroy'])->name('massDestroy');
             });
         });
 
@@ -801,9 +821,7 @@ Route::group(['middleware' => 'language'], function () {
         Route::group(['prefix' => 'moderation'], function () {
             Route::name('staff.moderation.')->group(function () {
                 Route::get('/', [App\Http\Controllers\Staff\ModerationController::class, 'index'])->name('index');
-                Route::post('/{id}/approve', [App\Http\Controllers\Staff\ModerationController::class, 'approve'])->name('approve');
-                Route::post('/reject', [App\Http\Controllers\Staff\ModerationController::class, 'reject'])->name('reject');
-                Route::post('/postpone', [App\Http\Controllers\Staff\ModerationController::class, 'postpone'])->name('postpone');
+                Route::post('/{id}/update', [App\Http\Controllers\Staff\ModerationController::class, 'update'])->name('update');
             });
         });
 

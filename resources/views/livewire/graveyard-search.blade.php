@@ -241,6 +241,11 @@
                             @php $meta = App\Models\Cartoon::with('genres')->where('id', '=', $torrent->tmdb)->first() @endphp
                         @endif
                     @endif
+                    @if ($torrent->category->cartoontv_meta)
+                        @if ($torrent->tmdb || $torrent->tmdb != 0)
+                            @php $meta = App\Models\Cartoontv::with('genres')->where('id', '=', $torrent->tmdb)->first() @endphp
+                        @endif
+                    @endif
                     <tr>
                         <td style="width: 5%; text-align: center;">
                             <div class="text-center">

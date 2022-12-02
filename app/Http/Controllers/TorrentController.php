@@ -11,7 +11,6 @@ use App\Helpers\TorrentTools;
 use App\Models\Audit;
 use App\Models\BonTransactions;
 use App\Models\Category;
-use App\Models\Comment;
 use App\Models\Distributor;
 use App\Models\FeaturedTorrent;
 use App\Models\FreeleechToken;
@@ -31,6 +30,7 @@ use App\Models\Torrent;
 use App\Models\TorrentFile;
 use App\Models\TorrentRequest;
 use App\Models\Tv;
+use App\Models\Cartoontv;
 use App\Models\Type;
 use App\Models\Warning;
 use App\Repositories\ChatRepository;
@@ -101,6 +101,11 @@ class TorrentController extends Controller
         if ($torrent->category->cartoon_meta && $torrent->tmdb && $torrent->tmdb != 0) {
             $meta = Cartoon::with('genres', 'cast', 'companies', 'collection', 'recommendations')->where('id', '=', $torrent->tmdb)->first();
             $trailer = ( new \App\Services\Tmdb\Client\Cartoon($torrent->tmdb))->get_trailer();
+        }
+
+        if ($torrent->category->cartoontv_meta && $torrent->tmdb && $torrent->tmdb != 0) {
+            $meta = Cartoontv::with('genres', 'cast', 'companies', 'collection', 'recommendations')->where('id', '=', $torrent->tmdb)->first();
+            $trailer = ( new \App\Services\Tmdb\Client\Cartoontv($torrent->tmdb))->get_trailer();
         }
 
         if ($torrent->category->game_meta && ($torrent->igdb || $torrent->igdb != 0)) {
@@ -204,7 +209,7 @@ class TorrentController extends Controller
         $category = Category::findOrFail($request->input('category_id'));
 
         $resolutionRule = 'nullable|exists:resolutions,id';
-        if ($category->movie_meta || $category->tv_meta || $category->cartoon_meta) {
+        if ($category->movie_meta || $category->tv_meta || $category->cartoon_meta || $category->cartoontv_meta) {
             $resolutionRule = 'required|exists:resolutions,id';
         }
 
@@ -283,6 +288,10 @@ class TorrentController extends Controller
             $tmdbScraper->cartoon($torrent->tmdb);
         }
 
+        if ($torrent->category->cartoontv_meta && ($torrent->tmdb || $torrent->tmdb != 0)) {
+            $tmdbScraper->cartoontv($torrent->tmdb);
+        }
+
         return \to_route('torrent', ['id' => $torrent->id])
             ->withSuccess('Uspešno urejeno!');
     }
@@ -332,7 +341,7 @@ class TorrentController extends Controller
 
                 //Remove Torrent related info
                 \cache()->forget(\sprintf('torrent:%s', $torrent->info_hash));
-                Comment::where('torrent_id', '=', $id)->delete();
+                $torrent->comments()->delete();
                 Peer::where('torrent_id', '=', $id)->delete();
                 History::where('torrent_id', '=', $id)->delete();
                 Warning::where('torrent', '=', $id)->delete();
@@ -378,6 +387,7 @@ class TorrentController extends Controller
             $temp['type'] = match (1) {
                 $cat->movie_meta => 'movie',
                 $cat->cartoon_meta => 'cartoon',
+                $cat->cartoontv_meta => 'cartoontv',
                 $cat->tv_meta    => 'tv',
                 $cat->game_meta  => 'game',
                 $cat->music_meta => 'music',
@@ -504,7 +514,7 @@ class TorrentController extends Controller
         $torrent->free = $user->group->is_modo || $user->group->is_internal ? $request->input('free') : 0;
 
         $resolutionRule = 'nullable|exists:resolutions,id';
-        if ($category->movie_meta || $category->tv_meta || $category->cartoon_meta) {
+        if ($category->movie_meta || $category->tv_meta || $category->cartoon_meta || $category->cartoontv_meta) {
             $resolutionRule = 'required|exists:resolutions,id';
         }
 
@@ -556,6 +566,11 @@ class TorrentController extends Controller
                 ->withErrors($v->errors())->withInput();
         }
 
+        // Torrent FL 100%
+        if (config('torrent.size_freeleech') == true && $torrent->size >= \config('torrent.size_threshold')) {
+            $torrent->free = 100;
+        }
+
         // Save The Torrent
         $torrent->save();
 
@@ -585,6 +600,10 @@ class TorrentController extends Controller
 
         if ($torrent->category->cartoon_meta !== 0 && ($torrent->tmdb || $torrent->tmdb != 0)) {
             $tmdbScraper->cartoon($torrent->tmdb);
+        }
+
+        if ($torrent->category->cartoontv_meta !== 0 && ($torrent->tmdb || $torrent->tmdb != 0)) {
+            $tmdbScraper->cartoontv($torrent->tmdb);
         }
 
         // Torrent Keywords System

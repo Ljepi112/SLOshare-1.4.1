@@ -1,5 +1,10 @@
 @extends('layout.default')
 
+@section('title')
+    <title>Uredi {{ __('staff.torrent-categories') }} - {{ __('staff.staff-dashboard') }}</title>
+@endsection
+
+
 @section('breadcrumbs')
     <li class="breadcrumbV2">
         <a href="{{ route('staff.dashboard.index') }}" class="breadcrumb__link">
@@ -114,6 +119,18 @@
                         @checked($category->cartoon_meta)
                     >
                     <label for="movie_meta">{{ __('staff.cartoons-meta-data') }}</label>
+                </p>
+                <p class="form__group">
+                    <input type="hidden" name="cartoontv_meta" value="0">
+                    <input
+                        id="cartoontv_meta"
+                        class="form__checkbox"
+                        type="checkbox"
+                        name="cartoontv_meta"
+                        value="1"
+                        @checked($category->cartoontv_meta)
+                    >
+                    <label for="movie_meta">{{ __('staff.cartoontvs-meta-data') }}</label>
                 </p>
                 <p class="form__group">
                     <input type="hidden" name="game_meta" value="0">

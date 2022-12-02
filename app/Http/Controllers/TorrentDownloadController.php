@@ -90,6 +90,6 @@ class TorrentDownloadController extends Controller
         $torrentDownload->type = $rsskey ? 'Uporaba RSS/API '.$request->header('User-Agent') : 'Uporaba spletnega mesta '.$request->header('User-Agent');
         $torrentDownload->save();
 
-        return \response()->download(\getcwd().'/files/tmp/'.$tmpFileName)->deleteFileAfterSend(true);
+        return \response()->download(\getcwd().'/files/tmp/'.$tmpFileName, null, ['Vrsta vsebine' => 'application/x-bittorrent'])->deleteFileAfterSend(true);
     }
 }

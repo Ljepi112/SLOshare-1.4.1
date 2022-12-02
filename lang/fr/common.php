@@ -80,7 +80,7 @@ return [
     'legend'               => 'Légende',
     'lists'                => 'Listes',
     'lock-account'         => 'Verrouiller le compte',
-    'logout'               => 'Déonnecter',
+    'logout'               => 'Déconnecter',
     'members'              => 'Membres',
     'message'              => 'Message',
     'minute'               => 'Minute',

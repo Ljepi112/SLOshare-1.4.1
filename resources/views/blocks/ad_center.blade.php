@@ -1,5 +1,3 @@
-    <div class="col-md-10 col-sm-10 col-md-offset-1 col-slo-ad">
-        <div class="panel-slo">
-            <img src="{{ url('img/ad/top.jpg') }}" alt="ad-center" style="width: 1530.83px;">
-        </div>
-    </div>
+	<section class="panelV2">
+		<div style="width: 970px; height: 90px;" data-admanids="f57b6946_c52de746"></div>
+	</section>

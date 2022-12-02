@@ -1,5 +1,4 @@
-<div class="col-md-10 col-sm-10 col-md-offset-1">
-
+	<section class="panelV2 table-responsive">
     <!-- Buttons -->
     <ul class="nav nav-tabs-user mb-5-user" role="tablist">
         <li class="active">
@@ -37,6 +36,11 @@
          			        @php $meta = App\Models\Cartoon::where('id', '=', $seed->tmdb)->first(); @endphp
          		        @endif
          	        @endif
+         		    @if ($seed->category->cartoontv_meta)
+         		         @if ($seed->tmdb || $seed->tmdb != 0)
+         			            @php $meta = App\Models\Cartoontv::where('id', '=', $seed->tmdb)->first(); @endphp
+                         @endif
+                    @endif
          		    @if ($seed->category->game_meta)
          			    @if ($seed->igdb || $seed->igdb != 0)
          				    @php $meta = MarcReichel\IGDBLaravel\Models\Game::with(['cover' => ['url', 'image_id']])->find($seed->igdb); @endphp
@@ -53,6 +57,14 @@
     						    @endif
                             @endif
     			            @if ($seed->category->cartoon_meta)
+                                @if(file_exists(public_path().'/files/img/torrent-cover_'.$seed->id.'.jpg'))
+                                    style="background-image: url('{{ url('files/img/torrent-cover_' . $seed->id . '.jpg') }}');" class="show-poster" alt="{{ $seed->name }}>
+                                @else
+    							    style="background-image: url('{{ isset($meta->poster) ? tmdb_image('poster_mid', $meta->poster) : '/img/SLOshare/cartoon_no_image_400x600.jpg' }}"
+    							    class="show-poster" alt="{{ $seed->name }}>
+    						    @endif
+                            @endif
+    			            @if ($seed->category->cartoontv_meta)
                                 @if(file_exists(public_path().'/files/img/torrent-cover_'.$seed->id.'.jpg'))
                                     style="background-image: url('{{ url('files/img/torrent-cover_' . $seed->id . '.jpg') }}');" class="show-poster" alt="{{ $seed->name }}>
                                 @else
@@ -98,7 +110,7 @@
                                         <div class="release-info-meta"><a class="badge-status">TMDB: {{ $meta->vote_average ?? 0 }}/10</a></div>
                                     @endif
 
-						            <div class="release-info-meta">{{ __('sloshare.added') }} {{ date('d.m.Y', $seed->created_at->getTimestamp()) }} | {{ date('H:m', $seed->created_at->getTimestamp()) }}</div>
+						            <div class="release-info-meta">{{ __('sloshare.added') }} {{ date('d.m.Y', $seed->created_at->getTimestamp()) }} | {{ date('h:m', $seed->created_at->getTimestamp()) }}</div>
 						            <div class="release-info-meta">{{ __('sloshare.uppedby') }} {{ $seed->user->username }}</div>
 					            </div>
 					            <div class="release-info-rating">
@@ -138,6 +150,11 @@
     					    @php $meta = App\Models\Cartoon::where('id', '=', $leech->tmdb)->first(); @endphp
     				    @endif
     			    @endif
+    			    @if ($leech->category->cartoontv_meta)
+    				    @if ($leech->tmdb || $leech->tmdb != 0)
+    					    @php $meta = App\Models\Cartoontv::where('id', '=', $leech->tmdb)->first(); @endphp
+    				    @endif
+                    @endif
     			    @if ($leech->category->game_meta)
     				    @if ($leech->igdb || $leech->igdb != 0)
     			            @php $meta = MarcReichel\IGDBLaravel\Models\Game::with(['cover' => ['url', 'image_id']])->find($leech->igdb); @endphp
@@ -154,6 +171,14 @@
     						    @endif
                             @endif
     			            @if ($leech->category->cartoon_meta)
+                                @if(file_exists(public_path().'/files/img/torrent-cover_'.$leech->id.'.jpg'))
+                                    style="background-image: url('{{ url('files/img/torrent-cover_' . $leech->id . '.jpg') }}');" class="show-poster" alt="{{ $leech->name }}>
+                                @else
+    						        style="background-image: url('{{ isset($meta->poster) ? tmdb_image('poster_mid', $meta->poster) : '/img/SLOshare/cartoon_no_image_400x600.jpg' }}"
+    							    class="show-poster" alt="{{ $leech->name }}>
+    					        @endif
+                            @endif
+    			            @if ($leech->category->cartoontv_meta)
                                 @if(file_exists(public_path().'/files/img/torrent-cover_'.$leech->id.'.jpg'))
                                     style="background-image: url('{{ url('files/img/torrent-cover_' . $leech->id . '.jpg') }}');" class="show-poster" alt="{{ $leech->name }}>
                                 @else
@@ -199,7 +224,7 @@
                                         <div class="release-info-meta"><a class="badge-status">TMDB: {{ $meta->vote_average ?? 0 }}/10</a></div>
                                     @endif
 
-						            <div class="release-info-meta">{{ __('sloshare.added') }} {{ date('d.m.Y', $leech->created_at->getTimestamp()) }} | {{ date('H:m', $leech->created_at->getTimestamp()) }}</div>
+						            <div class="release-info-meta">{{ __('sloshare.added') }} {{ date('d.m.Y', $leech->created_at->getTimestamp()) }} | {{ date('h:m', $leech->created_at->getTimestamp()) }}</div>
 						            <div class="release-info-meta">{{ __('sloshare.uppedby') }} {{ $leech->user->username }}</div>
 					            </div>
 					            <div class="release-info-rating">
@@ -217,5 +242,4 @@
                 </div>
             </section>
         </div>
-    </div>
-</div>
+	</section>

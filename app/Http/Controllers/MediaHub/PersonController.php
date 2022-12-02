@@ -21,7 +21,7 @@ class PersonController extends Controller
     public function show(int $id): \Illuminate\Contracts\View\Factory|\Illuminate\View\View
     {
         $details = Person::findOrFail($id);
-        $credits = Person::with(['tv', 'season', 'episode', 'movie', 'cartoon'])->findOrFail($id);
+        $credits = Person::with(['tv', 'season', 'episode', 'movie', 'cartoon', 'cartoontv'])->findOrFail($id);
 
         return \view('mediahub.person.show', ['credits' => $credits, 'details' => $details]);
     }

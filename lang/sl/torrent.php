@@ -267,11 +267,13 @@ return [
     'movie-database'           => 'Filmska zbirka podatkov',
     'tv-database'              => 'TV zbirka podatkov',
     'cartoons-database'        => 'Risanke zbirke podatkov',
+    'cartoontvs-database'      => 'Risanke TV zbirke podatkov',
     'homepage'                 => 'Domača stran',
     'status'                   => 'Status:',
     'sloshare-recommends'      => 'SLOshare Priporoča',
     'collection-of-movies'     => 'Zbirka Filmov',
     'collection-of-tv'         => 'Zbirka TV',
     'collection-of-cartoons'   => 'Zbirka Risank',
+    'collection-of-cartoontvs' => 'Zbirka Risank TV',
     'playlists'                => 'Seznami predvajanja',
 ];

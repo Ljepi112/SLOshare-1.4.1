@@ -37,6 +37,11 @@ class FetchMeta extends Command
                 $this->info('TV je pridobljeno');
             }
 
+            if ($torrent->category->cartoontv_meta) {
+                $tmdbScraper->cartoontv($torrent->tmdb);
+                $this->info('Serije Risank je pridobljeno');
+            }
+
             if ($torrent->category->movie_meta) {
                 $tmdbScraper->movie($torrent->tmdb);
                 $this->info('Film je pridobljen');

@@ -26,4 +26,7 @@ return [
     'subtitles'                 => 'Podnapisi:',
 
     'success'                   => 'Your Message Was Successfully Sent',
+
+    'home-video'                => 'Home Video',
+    'link'                      => 'ID Videa iz YouTube',
 ];

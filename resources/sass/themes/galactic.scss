@@ -20,6 +20,10 @@
     --color-bright-white: hsl(0, 0%, 100%);
     --color-light-orange: hsl(20, 20%, 50%);
 
+    --message-bubble-bg: #222;
+    --message-bubble-fg: currentColor;
+    --button-filled-bg: var(--color-green);
+
     --achievement-fg: inherit;
     --achievement-bg: #2c2c2c;
 
@@ -94,6 +98,9 @@
     --meter-fg: #333;
     --meter-bg: #505050;
 
+    --notification-read: transparent;
+    --notification-unread: var(--color-green);
+
     --paginate-bg: #272727;
     --paginate-bg-hover: #222;
     --paginate-bg-current: #202020;
@@ -126,6 +133,14 @@
     --textarea-border-hover: 2px solid #999;
     --textarea-border-radius: 5px;
     --textarea-fg: #bbb;
+
+    --torrent-card-bg: #272727;
+    --torrent-card-fg: var(--text-color);
+    --torrent-card-border: none;
+    --torrent-card-head-bg: #1c1c1c;
+    --torrent-card-head-fg: #fff;
+    --torrent-card-link-fg: #fff;
+    --torrent-card-genre-fg: #fff;
 }
 
 .tooltip .tooltip-inner {
@@ -1134,7 +1149,7 @@ fieldset[disabled] {
     display: block !important;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
-    background-color: #363636 !important;
+    background-color: var(--message-bubble-bg) !important;
     padding: 4px 12px 0 8px;
     margin: 4px 12px 0 48px;
 }
@@ -1142,7 +1157,7 @@ fieldset[disabled] {
 .sent > div {
     display: block !important;
     border-bottom-right-radius: 15px;
-    background-color: #363636 !important;
+    background-color: var(--message-bubble-bg) !important;
     padding: 0 12px 4px 8px !important;
     margin: 0 12px 4px 48px !important;
 }
@@ -1157,7 +1172,7 @@ fieldset[disabled] {
     bottom: 4px;
     left: 38px;
     width: 0;
-    border-right: 10px solid #363636 !important;
+    border-right: 10px solid var(--message-bubble-bg) !important;
     border-top: 10px solid transparent;
     /* border-bottom: 10px solid transparent; */
 }
@@ -1450,10 +1465,29 @@ select.form-control.page-search {
     margin-right: 15px;
 }
 .newbodyimg {
-    width: 200px;
-    height: 116px;
+    width: 100px;
     float: left;
 }
+.responsive {
+    width: 100%;
+    height: auto;
+}
+.video-container {
+    position: relative;
+    padding-bottom: 50.6%; /*56.25%*/
+    padding-top: 30px;
+    height: 0;
+    overflow: hidden;
+}
+
+.video-container iframe, .video-container object, .video-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+/* =================== ??? ==================== */
 .newbodytext {
     float: left;
     width: 195px;
@@ -1466,4 +1500,5 @@ select.form-control.page-search {
     margin-left: auto;
     margin-right: auto;
 }
+/* =================== ??? ==================== */
 /* =================== NEWS HOME ==================== */

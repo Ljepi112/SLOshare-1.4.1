@@ -36,4 +36,9 @@ class Crew extends Model
     {
         return $this->belongsToMany(Cartoon::class, 'crew_cartoon', 'cartoon_id', 'person_id');
     }
+
+    public function cartoontv(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Cartoon::class, 'crew_cartoontv', 'cartoontv_id', 'person_id');
+    }
 }

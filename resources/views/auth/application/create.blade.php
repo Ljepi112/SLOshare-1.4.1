@@ -22,10 +22,22 @@
     <link rel="icon" href="{{ url('/favicon.png') }}" type="image/x-icon">
 
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ mix('css/snowfall/font-awesome.css') }}" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ mix('css/snowfall/jqueryscripttop.css') }}" crossorigin="anonymous">
+    <script src="{{ mix('js/jquery-1.12.4.js') }}" crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q8PXB7XS8X"></script>
+    <script src="{{ mix('js/google.js') }}" crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script type="text/javascript" async="" src="https://adserver.adman.si/add/adman.js"></script>
 </head>
 
-@php $bg = rand(1, 38); $bgchange = $bg.".jpg" @endphp
-<body style="background: url('/img/login/background/{{ $bgchange }}');background-position-x: 50%;background-position-y: center;background-size: cover;background-attachment: fixed;">
+@php $bg = rand(1, 4); $bgchange = $bg.".jpg" @endphp
+<body style="background: url('/img/login/december/{{ $bgchange }}');background-position-x: 50%;background-position-y: center;background-size: cover;background-attachment: fixed;">
+
+<!-- December -->
+<div id="snowfall-wrapper" />
+<!-- December -->
 
 @if ($errors->any())
     <div id="ERROR_COPY" style="display: none;">
@@ -258,6 +270,10 @@
         </div>
     </div>
 @endif
+
+<script src="{{ mix('js/ad.js') }}" crossorigin="anonymous"></script>
+<script src="{{ mix('js/jquery.snowfall.js') }}" crossorigin="anonymous"></script>
+<script src="{{ mix('js/snowfall.js') }}" crossorigin="anonymous"></script>
 </body>
 
 </html>

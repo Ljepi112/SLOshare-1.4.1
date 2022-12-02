@@ -43,7 +43,7 @@ class FlushController extends Controller
         }
 
         return \to_route('staff.dashboard.index')
-            ->withSuccess('Ghost Peers so bili splakovani');
+            ->withSuccess('Ghost Peers so bili odplaknjeni');
     }
 
     /**
@@ -59,10 +59,10 @@ class FlushController extends Controller
         }
 
         $this->chatRepository->systemMessage(
-            'Klepetalnica je bila splakovana! :broom:'
+            'Klepetalnica je bila odplaknjena! :broom:'
         );
 
         return \to_route('staff.dashboard.index')
-            ->withSuccess('Klepetalnica je bila splakovana');
+            ->withSuccess('Klepetalnica je bila odplaknjena');
     }
 }

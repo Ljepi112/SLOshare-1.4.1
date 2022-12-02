@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-    <title>{{ __('request.edit-request') }}</title>
+    <title>{{ __('request.edit-request') }} - {{ config('other.title') }}</title>
 @endsection
 
 @section('breadcrumbs')
@@ -20,196 +20,188 @@
     </li>
 @endsection
 
-@section('content')
-    <div class="container">
-        @if ($user->can_request == 0)
-            <div class="container">
-                <div class="jumbotron shadowed">
-                    <div class="container">
-                        <h1 class="mt-5 text-center">
-                            <i class="{{ config('other.font-awesome') }} fa-times text-danger"></i>
-                            {{ __('request.no-privileges') }}
-                        </h1>
-                        <div class="separator"></div>
-                        <p class="text-center">{{ __('request.no-privileges-desc') }}!</p>
-                    </div>
-                </div>
-            </div>
-        @else
-            <h1 class="upload-title">{{ __('request.edit-request') }}</h1>
-            <form role="form" method="POST" action="{{ route('edit_request', ['id' => $torrentRequest->id]) }}">
-                @csrf
-                <div class="block">
-                    <div class="form-group">
-                        <label for="name">{{ __('request.title') }}</label>
-                        <label>
-                            <input type="text" name="name" class="form-control" value="{{ $torrentRequest->name }}"
-                                   required>
+@section('page', 'page__request--edit')
+
+@section('main')
+    @if ($user->can_request == 0)
+        <section class="panelV2">
+            <h2 class="panel__heading">
+                <i class="{{ config('other.font-awesome') }} fa-times text-danger"></i>
+                {{ __('request.no-privileges') }}!
+            </h2>
+            <p class="panel__body">{{ __('request.no-privileges-desc') }}!</p>
+        </section>
+    @else
+        <section class="panelV2">
+            <h2 class="panel__heading">{{ __('request.edit-request') }}</h2>
+            <div class="panel__body">
+                <form class="form" method="POST" action="{{ route('edit_request', ['id' => $torrentRequest->id]) }}">
+                    @csrf
+                    <p class="form__group">
+                        <input
+                            id="title"
+                            class="form__text"
+                            name="name"
+                            required
+                            type="text"
+                            value="{{ $torrentRequest->name ?: old('name') }}"
+                        >
+                        <label class="form__label form__label--floating" for="title">
+                            {{ __('request.title') }}
                         </label>
-                    </div>
-
-                    @if ($torrentRequest->category->movie_meta || $torrentRequest->category->tv_meta || $torrentRequest->category->cartoon_meta)
-                        <div class="form-group">
-                            <label for="name">TMDB ID <b>({{ __('common.required') }} za FILME, SERIJE in RISANKE)</b></label>
-                            <br>
-                            <label for="name">URL za TMDB ID: <a href="https://www.themoviedb.org/" target="_blank"><b>https://www.themoviedb.org/</b></a></label>
-                            <label>
-                                <input type="number" name="tmdb" value="{{ $torrentRequest->tmdb }}"
-                                       class="form-control" required>
-                            </label>
-                        </div>
-                    @else
-                        <input type="hidden" name="tmdb" value="0">
-                    @endif
-
-                    @if ($torrentRequest->category->movie_meta || $torrentRequest->category->tv_meta || $torrentRequest->category->cartoon_meta)
-                        <div class="form-group">
-                            <label for="name">IMDB ID <b>({{ __('torrent.optional') }})</b></label>
-                            <br>
-                            <label for="name">URL za IMDB ID: <a href="https://www.imdb.com/" target="_blank"><b>https://www.imdb.com/</b></a></label>
-                            <label>
-                                <input type="number" name="imdb" value="{{ $torrentRequest->imdb }}"
-                                       class="form-control" required>
-                            </label>
-                        </div>
-                    @else
-                        <input type="hidden" name="imdb" value="0">
-                    @endif
-
-                    @if ($torrentRequest->category->tv_meta)
-                        <div class="form-group">
-                            <label for="name">TVDB ID <b>({{ __('torrent.optional') }})</b></label>
-                            <br>
-                            <label for="name">URL za TVDB ID: <a href="https://www.thetvdb.com/" target="_blank"><b>https://www.thetvdb.com/</b></a></label>
-                            <label>
-                                <input type="number" name="tvdb" value="{{ $torrentRequest->tvdb }}"
-                                       class="form-control" required>
-                            </label>
-                        </div>
-                    @else
-                        <input type="hidden" name="tvdb" value="0">
-                    @endif
-
-                    @if ($torrentRequest->category->movie_meta || $torrentRequest->category->tv_meta || $torrentRequest->category->cartoon_meta)
-                        <div class="form-group">
-                            <label for="name">MAL ID <b>({{ __('request.required') }} For Anime)</b></label>
-                            <label>
-                                <input type="number" name="mal" value="{{ $torrentRequest->mal }}" class="form-control"
-                                       required>
-                            </label>
-                        </div>
-                    @else
-                        <input type="hidden" name="mal" value="0">
-                    @endif
-
-                    @if ($torrentRequest->category->game_meta)
-                        <div class="form-group">
-                            <label for="name">IGDB ID <b>{{ __('request.required') }} za IGRE))</b></label>
-                            <br>
-                            <label for="name">URL za IGDB ID: <a href="https://www.igdb.com/discover" target="_blank"><b>https://www.igdb.com/discover</b></a></label>
-                            <label>
-                                <input type="number" name="igdb" value="{{ $torrentRequest->igdb }}"
-                                       class="form-control" required>
-                            </label>
-                        </div>
-                    @else
-                        <input type="hidden" name="igdb" value="0">
-                    @endif
-
-                    <div class="form-group">
-                        <label for="category_id">{{ __('request.category') }}</label>
-                        <label>
-                            <select name="category_id" class="form-control">
-                                <option value="{{ $torrentRequest->category->id }}" selected>
-                                    {{ $torrentRequest->category->name }} ({{ __('request.current') }})
+                    </p>
+                    <p class="form__group">
+                        <select
+                            id="category_id"
+                            class="form__select"
+                            name="category_id"
+                            required
+                        >
+                            <option hidden selected disabled value=""></option>
+                            @foreach ($categories as $category)
+                                <option class="form__option" value="{{ $category->id }}" @selected($torrentRequest->category_id == $category->id)>
+                                    {{ $category->name }}
                                 </option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
+                            @endforeach
+                        </select>
+                        <label class="form__label form__label--floating" for="category_id">
+                            {{ __('request.category') }}
                         </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="type">{{ __('request.type') }}</label>
-                        <label>
-                            <select name="type_id" class="form-control">
-                                <option value="{{ $torrentRequest->type->id }}"
-                                        selected>{{ $torrentRequest->type->name }}
-                                    ({{ __('request.current') }})
+                    </p>
+                    <p class="form__group">
+                        <select
+                            id="type_id"
+                            class="form__select"
+                            name="type_id"
+                            required
+                        >
+                            <option hidden disabled selected value=""></option>
+                            @foreach ($types as $type)
+                                <option value="{{ $type->id }}" @selected(old('type_id')==$type->id) @selected($torrentRequest->type_id == $type->id)>
+                                    {{ $type->name }}
                                 </option>
-                                @foreach ($types as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                @endforeach
-                            </select>
+                            @endforeach
+                        </select>
+                        <label class="form__label form__label--floating" for="type_id">
+                            {{ __('request.type') }}
                         </label>
-                    </div>
-
-                    @if ($torrentRequest->category->movie_meta || $torrentRequest->category->tv_meta || $torrentRequest->category->cartoon_meta)
-                        <div class="form-group">
-                            <label for="resolution_id">{{ __('torrent.resolution') }}</label>
-                            <label>
-                                <select name="resolution_id" class="form-control">
-                                    @if (! $torrentRequest->resolution)
-                                        <option hidden="" disabled="disabled" selected="selected" value="">{{ __('request.select-resolution') }}
-                                        </option>)
-                                    @else
-                                        <option value="{{ $torrentRequest->resolution->id }}"
-                                                selected>{{ $torrentRequest->resolution->name }}
-                                            ({{ __('request.current') }})
-                                        </option>
-                                    @endif
-                                    @foreach ($resolutions as $resolution)
-                                        <option value="{{ $resolution->id }}">{{ $resolution->name }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-                        </div>
-                    @endif
-
-                    <div class="form-group">
-                        <label for="description">{{ __('request.description') }}</label>
-                        <label for="request-form-description"></label>
-                        <textarea id="request-form-description" name="description" cols="30" rows="10"
-                                  class="form-control">{{ $torrentRequest->description }}</textarea>
-                    </div>
-
-                    <br>
-
-@if (auth()->user()->group->is_admin)
-                    <label for="anon" class="control-label">{{ __('common.anonymous') }}?</label>
-                    <div class="radio-inline">
-                        <label>
-                            <input type="radio" name="anon" @if ($torrentRequest->anon == 1) checked @endif
-                            value="1">{{ __('common.yes') }}
+                    </p>
+                    <p class="form__group">
+                        <select
+                            id="resolution_id"
+                            class="form__select"
+                            name="resolution_id"
+                            required
+                        >
+                            <option hidden disabled selected value=""></option>
+                            @foreach ($resolutions as $resolution)
+                                <option value="{{ $resolution->id }}" @selected($torrentRequest->resolution_id == $resolution->id)>
+                                    {{ $resolution->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label class="form__label form__label--floating" for="resolution_id">
+                            {{ __('request.resolution') }}
                         </label>
+                    </p>
+                    <div class="form__group--short-horizontal">
+                        <p class="form__group">
+                            <input type="hidden" name="tmdb" value="0" />
+                            <input
+                                id="autotmdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="tmdb"
+                                pattern="[0-9]*"
+                                required
+                                type="text"
+                                value="{{ $torrentRequest->tmdb ?: old('tmdb') ?? '0') }}"
+                            >
+                            <label class="form__label form__label--floating" for="autotmdb">TMDB ID</label>
+                            <output name="apimatch" id="apimatch" for="torrent"></output>
+                        </p>
+                        <p class="form__group">
+                            <input type="hidden" name="imdb" value="0" />
+                            <input
+                                id="autoimdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="imdb"
+                                pattern="[0-9]*"
+                                required
+                                type="text"
+                                value="{{ $torrentRequest->imdb ?: old('imdb') ?? '0') }}"
+                            >
+                            <label class="form__label form__label--floating" for="autoimdb">IMDB ID</label>
+                        </p>
+                        <p class="form__group">
+                            <input type="hidden" name="tvdb" value="0" />
+                            <input
+                                id="autotvdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="tvdb"
+                                pattern="[0-9]*"
+                                placeholder=""
+                                type="text"
+                                value="{{ $torrentRequest->tvdb ?: (old('tvdb') ?? '0') }}"
+                            >
+                            <label class="form__label form__label--floating" for="autotvdb">TVDB ID</label>
+                        </p>
+                        <!--<p class="form__group">
+                            <input type="hidden" name="mal" value="0" />
+                            <input
+                                id="automal"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="mal"
+                                pattern="[0-9]*"
+                                placeholder=""
+                                type="text"
+                                value="{{ $torrentRequest->mal ?: (old('mal') ?? '0') }}"
+                            >
+                            <label class="form__label form__label--floating" for="automal">MAL ID ({{ __('torrent.required-anime') }})</label>
+                        </p>-->
+                        <p class="form__group">
+                            <input
+                                id="igdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="igdb"
+                                pattern="[0-9]*"
+                                placeholder=""
+                                type="text"
+                                value="{{ $torrentRequest->igdb ?: (old('igdb') ?? '0') }}"
+                            >
+                            <label class="form__label form__label--floating" for="name">IGDB ID <b>({{ __('torrent.required-games') }})</b></label>
+                        </p>
                     </div>
-                    <div class="radio-inline">
-                        <label>
-                            <input type="radio" name="anon" @if ($torrentRequest->anon == 0) checked @endif
-                            value="0">{{ __('common.no') }}
-                        </label>
-                    </div>
-@else
+                    @livewire('bbcode-input', [
+                        'name' => 'description',
+                        'label' => __('request.description'),
+                        'required' => true,
+                        'content' => $torrentRequest->description
+                    ])
+                    <!--<p class="form__group">
+                        <input type="hidden" name="anon" value="0">
+                        <input
+                            type="checkbox"
+                            class="form__checkbox"
+                            id="anon"
+                            name="anon"
+                            value="1"
+                            @checked(old('anon'))
+                        >
+                        <label class="form__label" for="anon">{{ __('common.anonymous') }}?</label>
+                    </p>-->
                     <input type="hidden" name="anon" value="0">
-@endif
-
-                    <br>
-
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">{{ __('common.submit') }}</button>
-                    </div>
-                </div>
-            </form>
-    </div>
+                    <p class="form__group">
+                        <button class="form__button form__button--filled">
+                            {{ __('common.submit') }}
+                        </button>
+                    </p>
+                </form>
+            </div>
+        </section>
     @endif
-@endsection
-
-@section('javascripts')
-    <script nonce="{{ SLOYakuza\SecureHeaders\SecureHeaders::nonce('script') }}">
-      $(document).ready(function () {
-        $('#request-form-description').wysibb({})
-      })
-
-    </script>
 @endsection

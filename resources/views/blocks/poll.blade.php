@@ -1,5 +1,4 @@
-    <div class="col-md-1 col-sm-1-slo col-md-br-1 col-slo-poll">
-@if ($poll && $poll->voters->where('user_id', '=', auth()->user()->id)->isEmpty())
+    <section class="panelV2">
         <div class="panel panel-danger">
             <div class="panel-heading">
                 <h4 class="text-center">
@@ -8,8 +7,9 @@
                     </div>
                 </h4>
             </div>
+            <h2 class="panel__heading">{{ $poll->title }}</h2>
             <div class="panel-body">
-                <h3 class="poll-title">{{ $poll->title }}</h3>
+@if ($poll && $poll->voters->where('user_id', '=', auth()->user()->id)->isEmpty())
                 <form class="form-horizontal" method="POST" action="/polls/vote">
                     @csrf
                     @if (count($errors) > 0)
@@ -53,7 +53,9 @@
                 @if ($poll->multiple_choice)
                     <span class="badge-user text-bold text-red poll-note">{{ __('poll.multiple-choice') }}</span>
                 @endif
+@else
+        @include('blocks.poll_vote')
+@endif
             </div>
         </div>
-@endif
-    </div>
+	</section>

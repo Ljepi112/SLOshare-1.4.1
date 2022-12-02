@@ -2,10 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\PrivateMessage;
 use App\Models\Warning;
+use App\Notifications\UserManualWarningExpire;
+use App\Notifications\UserWarningExpire;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @see \Tests\Unit\Console\Commands\AutoDeactivateWarningTest
@@ -32,25 +34,38 @@ class AutoDeactivateWarning extends Command
     public function handle(): void
     {
         $current = Carbon::now();
-        $warnings = Warning::with(['warneduser', 'torrenttitle'])->where('active', '=', 1)->where('expires_on', '<', $current)->get();
+        $warnings = Warning::with(['warneduser', 'torrenttitle'])
+            ->where('active', '=', 1)
+            ->get();
 
         foreach ($warnings as $warning) {
-            // Set Records Active To 0 in warnings table
-            $warning->active = '0';
-            $warning->save();
+            if ($warning->expires_on <= $current || ($warning->torrenttitle && $warning->torrenttitle->history()->where('user_id', '=', $warning->warneduser->id)->first()->seedtime >= \config('hitrun.seedtime'))) {
+                // Set Records Active To 0 in warnings table
+                $warning->active = '0';
+                $warning->save();
 
-            // Send Private Message
-            $pm = new PrivateMessage();
-            $pm->sender_id = 1;
-            $pm->receiver_id = $warning->warneduser->id;
-            $pm->subject = 'Opozorilo je poteklo';
-            if (isset($warning->torrent)) {
-                $pm->message = '[b]OPOZORILO[/b] ki ste ga prejeli v zvezi s Torrentom '.$warning->torrenttitle->name.' je poteklo! Poskusite ga ne dobiti več! [color=red][b]TO JE AVTOMATIZOVANO SISTEMSKO SPOROČILO, PROSIMO, NE ODGOVARAJTE![/b][/color]';
-            } else {
-                $pm->message = '[b]OPOZORILO[/b] ki ste ga prejeli: "'.$warning->reason.'" je poteklo! [color=red][b]TO JE AVTOMATIZOVANO SISTEMSKO SPOROČILO, PROSIMO, NE ODGOVARAJTE![/b][/color]';
+                // Send Notifications
+                if ($warning->torrenttitle) {
+                    $warning->warneduser->notify(new UserWarningExpire($warning->warneduser, $warning->torrenttitle));
+                } else {
+                    $warning->warneduser->notify(new UserManualWarningExpire($warning->warneduser, $warning));
+                }
             }
+        }
 
-            $pm->save();
+        // Calculate User Warning Count and Enable DL Priv If Required.
+        $warnings = Warning::with('warneduser')
+            ->select(DB::raw('user_id, count(*) as value'))
+            ->where('active', '=', 1)
+            ->groupBy('user_id')
+            ->having('value', '<', \config('hitrun.max_warnings'))
+            ->get();
+
+        foreach ($warnings as $warning) {
+            if ($warning->warneduser->can_download === 0) {
+                $warning->warneduser->can_download = 1;
+                $warning->warneduser->save();
+            }
         }
 
         $this->comment('Samodejni ukaz za deativacijo opozorila končan');

@@ -888,13 +888,13 @@
         @foreach ($medias as $media)
             @php
                 if ($media->category->movie_meta) {
-                    $$mediaType = 'movie';
+                    $mediaType = 'movie';
                 } elseif ($media->category->cartoon_meta) {
-                    $$mediaType = 'cartoon';
+                    $mediaType = 'cartoon';
                 } elseif ($media->category->tv_meta) {
-                    $$mediaType = 'tv';
+                    $mediaType = 'tv';
                 } else {
-                    $$mediaType = 'no';
+                    $mediaType = 'no';
                 }
 
                 $meta = null;

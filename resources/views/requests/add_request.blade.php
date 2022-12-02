@@ -1,7 +1,7 @@
 @extends('layout.default')
 
 @section('title')
-    <title>{{ __('request.add-request') }}</title>
+    <title>{{ __('request.add-request') }} - {{ config('other.title') }}</title>
 @endsection
 
 @section('breadcrumbs')
@@ -15,179 +15,218 @@
     </li>
 @endsection
 
-@section('content')
-    <div class="container">
-        @if ($user->can_request == 0)
-            <div class="container">
-                <div class="jumbotron shadowed">
-                    <div class="container">
-                        <h1 class="mt-5 text-center">
-                            <i class="{{ config('other.font-awesome') }} fa-times text-danger"></i>
-                            {{ __('request.no-privileges') }}
-                        </h1>
-                        <div class="separator"></div>
-                        <p class="text-center">{{ __('request.no-privileges-desc') }}!</p>
+@section('page', 'page__request--create')
+
+@section('main')
+    @if ($user->can_request)
+        <section class="panelV2">
+            <h2 class="panel__heading">{{ __('request.add-request') }}</h2>
+            <div class="panel__body">
+                <form class="form" method="POST" action="{{ route('add_request') }}">
+                    @csrf
+                    <p class="form__group">
+                        <input
+                            id="title"
+                            class="form__text"
+                            name="name"
+                            required
+                            type="text"
+                            value="{{ $title ?: old('name') }}"
+                        >
+                        <label class="form__label form__label--floating" for="title">
+                            {{ __('request.title') }}
+                        </label>
+                    </p>
+                    <p class="form__group">
+                        <select
+                            id="category_id"
+                            class="form__select"
+                            name="category_id"
+                            required
+                        >
+                            <option hidden selected disabled value=""></option>
+                            @foreach ($categories as $category)
+                                <option class="form__option" value="{{ $category->id }}">
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label class="form__label form__label--floating" for="category_id">
+                            {{ __('request.category') }}
+                        </label>
+                    </p>
+                    <p class="form__group">
+                        <select
+                            id="type_id"
+                            class="form__select"
+                            name="type_id"
+                            required
+                        >
+                            <option hidden disabled selected value=""></option>
+                            @foreach ($types as $type)
+                                <option value="{{ $type->id }}" @selected(old('type_id')==$type->id)>
+                                    {{ $type->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label class="form__label form__label--floating" for="type_id">
+                            {{ __('request.type') }}
+                        </label>
+                    </p>
+                    <p class="form__group">
+                        <select
+                            id="resolution_id"
+                            class="form__select"
+                            name="resolution_id"
+                            required
+                        >
+                            <option hidden disabled selected value=""></option>
+                            @foreach ($resolutions as $resolution)
+                                <option value="{{ $resolution->id }}" @selected(old('resolution_id')==$resolution->id)>
+                                    {{ $resolution->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label class="form__label form__label--floating" for="resolution_id">
+                            {{ __('request.resolution') }}
+                        </label>
+                    </p>
+                    <div class="form__group--short-horizontal">
+                        <p class="form__group">
+                            <input type="hidden" name="tmdb" value="0" />
+                            <input
+                                id="autotmdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="tmdb"
+                                pattern="[0-9]*"
+                                required
+                                type="text"
+                                x-bind:value="{{ $tmdb ?: old('tmdb') }}"
+                            >
+                            <label class="form__label form__label--floating" for="autotmdb">TMDB ID</label>
+                            <output name="apimatch" id="apimatch" for="torrent"></output>
+                        </p>
+                        <p class="form__group">
+                            <input type="hidden" name="imdb" value="0" />
+                            <input
+                                id="autoimdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="imdb"
+                                pattern="[0-9]*"
+                                required
+                                type="text"
+                                x-bind:value="{{ $imdb ?: old('imdb') }}"
+                            >
+                            <label class="form__label form__label--floating" for="autoimdb">IMDB ID</label>
+                        </p>
+                        <p class="form__group">
+                            <input type="hidden" name="tvdb" value="0" />
+                            <input
+                                id="autotvdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="tvdb"
+                                pattern="[0-9]*"
+                                placeholder=""
+                                type="text"
+                                x-bind:value="{{ old('tvdb') }}"
+                            >
+                            <label class="form__label form__label--floating" for="autotvdb">TVDB ID</label>
+                        </p>
+                        <!--<p class="form__group">
+                            <input type="hidden" name="mal" value="0" />
+                            <input
+                                id="automal"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="mal"
+                                pattern="[0-9]*"
+                                placeholder=""
+                                type="text"
+                                value="{{ old('mal') }}"
+                            >
+                            <label class="form__label form__label--floating" for="automal">MAL ID ({{ __('torrent.required-anime') }})</label>
+                        </p>-->
+                        <p class="form__group">
+                            <input type="hidden" name="igdb" value="0" />
+                            <input
+                                id="igdb"
+                                class="form__text"
+                                inputmode="numeric"
+                                name="igdb"
+                                pattern="[0-9]*"
+                                placeholder
+                                type="text"
+                                x-bind:value="{{ old('igdb') }}"
+                            >
+                            <label class="form__label form__label--floating" for="igdb">IGDB ID <b>({{ __('torrent.required-games') }})</b></label>
+                        </p>
                     </div>
-                </div>
-            </div>
-        @else
-            <div class="col-sm-12">
-
-                <div class="well well-sm mt-20">
-                    <p class="lead text-orange text-center"><strong>{{ __('request.no-imdb-id') }}</strong></p>
-                </div>
-            </div>
-            <h1 class="upload-title">{{ __('request.add-request') }}</h1>
-            <form role="form" method="POST" action="{{ route('add_request') }}">
-                @csrf
-                <div class="block">
-                    <div class="upload col-md-12">
-                        <div class="form-group">
-                            <label for="name">{{ __('request.title') }}</label>
-                            <label>
-                                <input type="text" name="name" class="form-control" value="{{ old('name') ?? $title }}"
-                                       required>
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="category_id">{{ __('request.category') }}</label>
-                            <label>
-                                <select name="category_id" class="form-control" required>
-                                    <option hidden="" disabled="disabled" selected="selected" value="">{{ __('request.select-category') }}
-                                    </option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="type_id">{{ __('request.type') }}</label>
-                            <label>
-                                <select name="type_id" class="form-control" required>
-                                    <option hidden="" disabled="disabled" selected="selected" value="">{{ __('request.select-type') }}
-                                    </option>
-                                    @foreach ($types as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="resolution_id">{{ __('request.resolution') }}</label>
-                            <label>
-                                <select name="resolution_id" class="form-control">
-                                    <option hidden="" disabled="disabled" selected="selected" value="">{{ __('request.select-resolution') }}
-                                    </option>
-                                    @foreach ($resolutions as $resolution)
-                                        <option value="{{ $resolution->id }}">{{ $resolution->name }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="name">TMDB ID <b>({{ __('request.required') }} za FILME, SERIJE in RISANKE)</b></label>
-                            <br>
-                            <label for="name">URL za TMDB ID: <a href="https://www.themoviedb.org/" target="_blank"><b>https://www.themoviedb.org/</b></a></label>
-                            <label>
-                                <input type="number" name="tmdb" id="autotmdb" class="form-control"
-                                       value="{{ $tmdb ?? old('tmdb') }}" required>
-                            </label>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="name">IMDB ID <b>({{ __('torrent.optional') }})</b></label>
-                            <br>
-                            <label for="name">URL za IMDB ID: <a href="https://www.imdb.com/" target="_blank"><b>https://www.imdb.com/</b></a></label>
-                            <label>
-                                <input type="number" name="imdb" id="autoimdb" class="form-control"
-                                       value="{{ $imdb ?? old('imdb') }}" required>
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="name">TVDB ID ({{ __('torrent.optional') }})</label>
-                            <br>
-                            <label for="name">URL za TVDB ID: <a href="https://www.thetvdb.com/" target="_blank"><b>https://www.thetvdb.com/</b></a></label>
-                            <label>
-                                <input type="number" name="tvdb" id="autotvdb" value="{{ old('tvdb') ?? '0' }}"
-                                       class="form-control" required>
-                            </label>
-                        </div>
-
-                        <!--<div class="form-group">
-                            <label for="name">MAL ID ({{ __('request.required') }} For Anime)</label>
-                            <label>
-                                <input type="number" name="mal" value="{{ old('mal') ?? '0' }}" class="form-control"
-                                       required>
-                            </label>
-                        </div>-->
-
-                        <input type="hidden" name="mal" value="0"
-
-                        <div class="form-group">
-                            <label for="name">IGDB ID <b>({{ __('request.required') }} za IGRE)</b></label>
-                            <br>
-                            <label for="name">URL za IGDB ID: <a href="https://www.igdb.com/discover" target="_blank"><b>https://www.igdb.com/discover</b></a></label>
-                            <label>
-                                <input type="number" name="igdb" value="{{ old('igdb') ?? '0' }}" class="form-control"
-                                       required>
-                            </label>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="description">{{ __('request.description') }}</label>
-                            <label for="request-form-description"></label>
-                            <textarea id="request-form-description" name="description" cols="30" rows="10"
-                                      class="form-control"></textarea>
-                        </div>
-
-@if (auth()->user()->group->is_admin)
-                        <div class="form-group">
-                            <label for="bonus_point">{{ __('request.reward') }}
-                                <small><em>({{ __('request.reward-desc') }})</em></small></label>
-                            <label>
-                                <input class="form-control" name="bounty" type="number" min='0' value="0" required>
-                            </label>
-                        </div>
-@else
-                        <input type="hidden" name="bounty" value="0">
-@endif
-
-@if (auth()->user()->group->is_admin)
-                        <label for="anon" class="control-label">{{ __('common.anonymous') }}?</label>
-                        <div class="radio-inline">
-                            <label><input type="radio" name="anon" value="1">{{ __('common.yes') }}</label>
-                        </div>
-                        <div class="radio-inline">
-                            <label><input type="radio" name="anon" checked="checked" value="0">{{ __('common.no') }}
-                            </label>
-                        </div>
-@else
-                    <input type="hidden" name="mal" value="0">
+                    @livewire('bbcode-input', [
+                        'name' => 'description',
+                        'label' => __('request.description'),
+                        'required' => true
+                    ])
+                    <!--<p class="form__group">
+                        <input
+                            class="form__text"
+                            name="bounty"
+                            type="text"
+                            pattern="[0-9]*?[1-9][0-9]{2,}"
+                            value="0"
+                            required>
+                        <label class="form__label form__label--floating" for="bonus_point">
+                            {{ __('request.reward') }} ({{ __('request.reward-desc') }})
+                        </label>
+                    </p>-->
+                    <input type="hidden" name="bonus_point" value="0">
+                    <!--<p class="form__group">
+                        <input type="hidden" name="anon" value="0">
+                        <input
+                            type="checkbox"
+                            class="form__checkbox"
+                            id="anon"
+                            name="anon"
+                            value="1"
+                            @checked(old('anon'))
+                        >
+                        <label class="form__label" for="anon">{{ __('common.anonymous') }}?</label>
+                    </p>-->
                     <input type="hidden" name="anon" value="0">
+                    <p class="form__group">
+                        <button class="form__button form__button--filled">
+                            {{ __('common.submit') }}
+                        </button>
+                    </p>
+                </form>
+            </div>
+        </section>
+    @else
+        <section class="panelV2">
+            <h2 class="panel__heading">
+                <i class="{{ config('other.font-awesome') }} fa-times text-danger"></i>
+                {{ __('request.no-privileges') }}!
+            </h2>
+            <p class="panel__body">{{ __('request.no-privileges-desc') }}!</p>
+        </section>
+    @endif
+@endsection
+
+@if ($user->can_request)
+    @section('sidebar')
+        <section class="panelV2">
+            <h2 class="panel__heading">{{ __('common.info') }}</h2>
+            <div class="panel__body">
+                <p>{{ __('request.no-imdb-id') }}</p>
+                <br>
+                <p>{{ __('torrent.tmdb') }} <a href="https://www.themoviedb.org/" target="_blank">https://www.themoviedb.org/</a></p>
+                <p>{{ __('torrent.imdb') }} <a href="https://www.imdb.com/" target="_blank">https://www.imdb.com/</a></p>
+                <p>{{ __('torrent.tvdb') }} <a href="https://www.thetvdb.com/" target="_blank">https://www.thetvdb.com/</a></p>
+                <p>{{ __('torrent.mal') }} <a href="https://myanimelist.net/" target="_blank">https://myanimelist.net/</a></p>
+                <p>{{ __('torrent.igdb') }} <a href="https://www.igdb.com/discover" target="_blank">https://www.igdb.com/discover</a></p>
+            </div>
+        </div>
+    @endsection
 @endif
-                    </div>
-                    <br>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">{{ __('common.submit') }}</button>
-                    </div>
-                </div>
-            </form>
-        @endif
-    </div>
-@endsection
-
-@section('javascripts')
-    <script nonce="{{ SLOYakuza\SecureHeaders\SecureHeaders::nonce('script') }}">
-      $(document).ready(function () {
-        $('#request-form-description').wysibb({})
-      })
-
-    </script>
-@endsection

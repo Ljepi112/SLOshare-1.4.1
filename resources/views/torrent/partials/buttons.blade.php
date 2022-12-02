@@ -40,13 +40,6 @@
     <div style="float: left;">
         @livewire('thank-button', ['torrent' => $torrent->id])
 
-        <form action="{{ route('comment_thanks', ['id' => $torrent->id]) }}" method="POST" style="display: inline;">
-            @csrf
-            <button type="submit" class="btn btn-xl btn-primary">
-                <i class='{{ config("other.font-awesome") }} fa-heart'></i> {{ __('torrent.quick-comment') }}
-            </button>
-        </form>
-
     <!--@if ($playlists->count() > 0)
         <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal_playlist_torrent">
             <i class="{{ config('other.font-awesome') }} fa-list-ol"></i> {{ __('torrent.add-to-playlist') }}

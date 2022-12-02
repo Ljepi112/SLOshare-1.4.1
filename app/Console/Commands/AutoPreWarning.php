@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\History;
-use App\Models\PrivateMessage;
 use App\Models\Warning;
+use App\Notifications\UserPreWarning;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 
 /**
  * @see \Tests\Unit\Console\Commands\AutoPreWarningTest
@@ -62,15 +62,8 @@ class AutoPreWarning extends Command
                     if ($exsist === null) {
                         $timeleft = \config('hitrun.grace') - \config('hitrun.prewarn');
 
-                        // Send Private Message
-                        $pm = new PrivateMessage();
-                        $pm->sender_id = 1;
-                        $pm->receiver_id = $pre->user->id;
-                        $pm->subject = 'Hit in Run Opozorilo Dohodne';
-                        $pm->message = 'Prejeli ste avtomatizirano [b]PRED OPOZORILO PM[/b] iz sistema, ker [b]ste bili ONEMOGOČENI za '.\config('hitrun.prewarn').\sprintf(' dni na Torrentu %s
-                                            in še niso izvedli zahtevanih pravil o času sedma, ki jih določa ', $pre->torrent->name).\config('other.title').\sprintf('. Če ga ne boste sejali v %s prejmete avtomatizirano OPOZORILO, ki bo trajno ', $timeleft).\config('hitrun.expire').' dni![/b]
-                                            [color=red][b] TO JE AVTOMATIZOVANO SISTEMSKO SPOROČILO, PROSIMO, NE ODGOVARAJTE![/b][/color]';
-                        $pm->save();
+                        // Send Notifications
+                        $pre->user->notify(new UserPreWarning($pre->user, $pre->torrent));
 
                         // Set History Prewarn
                         $pre->prewarn = 1;

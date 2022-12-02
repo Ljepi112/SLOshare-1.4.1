@@ -42,5 +42,10 @@ class ProcessCompanyJob implements ShouldQueue
             $metadata = new TMDBScraper();
             $metadata->cartoon($cartoon['id']);
         }
+
+        foreach ($this->company['cartoontv'] as $cartoontv) {
+            $metadata = new TMDBScraper();
+            $metadata->cartoontv($cartoontv['id']);
+        }
     }
 }

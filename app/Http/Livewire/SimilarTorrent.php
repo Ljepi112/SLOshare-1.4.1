@@ -17,6 +17,7 @@ use App\Models\Torrent;
 use App\Models\TorrentFile;
 use App\Models\TorrentRequest;
 use App\Models\Tv;
+use App\Models\Cartoontv;
 use App\Models\Warning;
 use Livewire\Component;
 
@@ -86,6 +87,12 @@ class SimilarTorrent extends Component
             });
         }
 
+        if ($category->cartoontv_meta) {
+            $query = $query->whereHas('category', function ($q) {
+                $q->where('cartoontv_meta', '=', true);
+            });
+        }
+
         $query = $query->where('tmdb', '=', $this->tmdbId);
         $query = $query->orderBy($this->sortField, $this->sortDirection);
 
@@ -138,6 +145,8 @@ class SimilarTorrent extends Component
 
                 if ($cat->tv_meta === 1) {
                     $meta = 'tv';
+                } elseif ($cat->cartoontv_meta === 1) {
+                    $meta = 'cartoontv';
                 } elseif ($cat->movie_meta === 1) {
                     $meta = 'movie';
                 } elseif ($cat->cartoon_meta === 1) {
@@ -155,6 +164,10 @@ class SimilarTorrent extends Component
                         break;
                     case 'tv':
                         $title = Tv::find($torrent->tmdb);
+                        $titles[] = $title->name.' ('.substr($title->first_air_date, 0, 4).')';
+                        break;
+                    case 'cartoontv':
+                        $title = Cartoontv::find($torrent->tmdb);
                         $titles[] = $title->name.' ('.substr($title->first_air_date, 0, 4).')';
                         break;
                     default:

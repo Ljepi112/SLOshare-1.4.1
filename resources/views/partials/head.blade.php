@@ -15,6 +15,12 @@
 <link rel="shortcut icon" href="{{ url('/favicon.png') }}" type="image/x-icon">
 <link rel="icon" href="{{ url('/favicon.png') }}" type="image/x-icon">
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q8PXB7XS8X"></script>
+<script src="{{ mix('js/google.js') }}" crossorigin="anonymous"></script>
+<!-- Google tag (gtag.js) -->
+<script type="text/javascript" async="" src="https://adserver.adman.si/add/adman.js"></script>
+
 @if (auth()->user()->standalone_css === null)
     <link rel="stylesheet" href="{{ mix('css/app.css') }}" crossorigin="anonymous">
     @if (auth()->user()->style == 1)

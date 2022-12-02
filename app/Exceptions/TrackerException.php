@@ -24,6 +24,7 @@ class TrackerException extends \Exception
         126 => 'Stranka :ua ni sprejemljivo! Preverite naš seznam dovoljenih.',
         127 => 'Stranka :ua prepovedano zaradi: :comment .',
         128 => 'Stranka :ua ni sprejemljivo! Preverite naš črni seznam.',
+        129 => 'Neveljavna Zahteva!',
 
         // Error message about Requests ( Part.2 request params )
         130 => 'ključ: :attribute manjka!',
@@ -38,7 +39,7 @@ class TrackerException extends \Exception
 
         // Error message about User Account
         140 => 'Geslo ne obstaja! Prosimo, ponovno prenesite .torrent',
-        141 => 'Vaš račun ni omogočen! (Trenutno `:status` )',
+        141 => 'Vaš račun ni omogočen! ( Trenutno `:status` )',
         142 => 'Vaše pravice za prenos so onemogočene! (Preberi pravila)',
 
         // Error message about Torrent

@@ -14,6 +14,9 @@ use App\Models\Topic;
 use App\Models\Torrent;
 use App\Models\User;
 //SLOshare
+use App\Models\Peer;
+use App\Models\History;
+use App\Models\HomeVideo;
 //SLOshare
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -163,7 +166,7 @@ class HomeController extends Controller
         $groups = \cache()->remember('user-groups', $expiresAt, fn () => Group::select(['name', 'color', 'effect', 'icon'])->oldest('position')->get());
 
         // Featured Torrents Block
-        $featured = \cache()->remember('latest_featured', $expiresAt, fn () => FeaturedTorrent::with('torrent', 'user')->get());
+        $featured = \cache()->remember('latest_featured', $expiresAt, fn () => FeaturedTorrent::with('torrent', 'torrent.resolution', 'torrent.type', 'torrent.category', 'user', 'user.group')->get());
 
         // Latest Poll Block
         $poll = \cache()->remember('latest_poll', $expiresAt, fn () => Poll::latest()->first());
@@ -186,7 +189,19 @@ class HomeController extends Controller
 
         //SLOshare
         // Total Members Count (All Groups)
-        $allUser = \cache()->remember('all_user', $expiresAt, fn () => User::withTrashed()->get());
+        $allUser = \cache()->remember('all_user', $current, fn () => User::withTrashed()->count());
+        // Total Torrents Count
+        $numTorrent = \cache()->remember('num_torrent', $current, fn () => Torrent::count());
+        // Total Seeders
+        $numSeeders = \cache()->remember('num_seeders', $current, fn () => Peer::where('seeder', '=', 1)->count());
+        // Total Leechers
+        $numLeechers = \cache()->remember('num_leechers', $current, fn () => Peer::where('seeder', '=', 0)->count());
+        //Total Upload Traffic With Double Upload
+        $creditedUpload = \cache()->remember('credited_upload', $current, fn () => History::sum('uploaded'));
+        //Total Download Traffic With Freeleech
+        $creditedDownload = \cache()->remember('credited_download', $current, fn () => History::sum('downloaded'));
+        //Home Video
+        $clients = \cache()->remember('link', $expiresAt, fn () => HomeVideo::latest()->take(1)->get());
         //SLOshare
 
         $freeleechTokens = FreeleechToken::where('user_id', $user->id)->get();
@@ -221,7 +236,13 @@ class HomeController extends Controller
             'freeleech_tokens'   => $freeleechTokens,
             'bookmarks'          => $bookmarks,
             //SLOshare
-            'all_user'          => $allUser,
+            'all_user'           => $allUser,
+            'num_torrent'        => $numTorrent,
+            'num_seeders'        => $numSeeders,
+            'num_leechers'       => $numLeechers,
+            'credited_upload'    => $creditedUpload,
+            'credited_download'  => $creditedDownload,
+            'clients'            => $clients,
             //SLOshare
         ]);
     }

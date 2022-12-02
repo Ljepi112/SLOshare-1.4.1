@@ -35,4 +35,7 @@ return [
     'cartoons'              => 'Cartoons',
     'cartoon'               => 'Cartoon',
     'cartoon-credits'       => 'Cartoon Credits:',
+    'cartoontvs'            => 'Cartoons TV',
+    'cartoontv'             => 'Cartoon TV',
+    'cartoontv-credits'     => 'Cartoon TV Credits:',
 ];

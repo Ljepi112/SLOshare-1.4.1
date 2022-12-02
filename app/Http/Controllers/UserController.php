@@ -1438,7 +1438,7 @@ class UserController extends Controller
 
         // Return with Error if no Peer exists
         if ($peers->isEmpty()) {
-            return \redirect()->back()->withErrors('Noben vrstnik ni bil najden! Počakajte vsaj 70 minut po zadnji najavki od stranke!');
+            return \redirect()->back()->withErrors('Noben vrstnik ni bil najden! Počakajte vsaj 70 minut po zadnji pijavki od stranke!');
         }
 
         $new_value = $user->own_flushes - 1;

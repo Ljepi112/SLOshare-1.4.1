@@ -16,6 +16,7 @@ use App\Models\TorrentRequest;
 use App\Models\TorrentRequestBounty;
 use App\Models\TorrentRequestClaim;
 use App\Models\Tv;
+use App\Models\Cartoontv;
 use App\Models\Type;
 use App\Models\User;
 use App\Notifications\NewRequestBounty;
@@ -73,6 +74,10 @@ class RequestController extends Controller
 
         if ($torrentRequest->category->cartoon_meta && ($torrentRequest->tmdb || $torrentRequest->tmdb != 0)) {
             $meta = Cartoon::with('genres', 'cast', 'companies', 'collection')->where('id', '=', $torrentRequest->tmdb)->first();
+        }
+
+        if ($torrentRequest->category->cartoontv_meta && ($torrentRequest->tmdb || $torrentRequest->tmdb != 0)) {
+            $meta = Cartoontv::with('genres', 'cast', 'companies', 'collection')->where('id', '=', $torrentRequest->tmdb)->first();
         }
 
         if ($torrentRequest->category->game_meta && ($torrentRequest->igdb || $torrentRequest->igdb != 0)) {
@@ -172,6 +177,10 @@ class RequestController extends Controller
 
         if ($torrentRequest->category->cartoon_meta !== 0 && ($torrentRequest->tmdb || $torrentRequest->tmdb != 0)) {
             $tmdbScraper->cartoon($torrentRequest->tmdb);
+        }
+
+        if ($torrentRequest->category->cartoontv_meta !== 0 && ($torrentRequest->tmdb || $torrentRequest->tmdb != 0)) {
+            $tmdbScraper->cartoontv($torrentRequest->tmdb);
         }
 
         $torrentRequestBounty = new TorrentRequestBounty();
@@ -290,6 +299,10 @@ class RequestController extends Controller
 
         if ($torrentRequest->category->cartoon_meta && ($torrentRequest->tmdb || $torrentRequest->tmdb != 0)) {
             $tmdbScraper->cartoon($torrentRequest->tmdb);
+        }
+
+        if ($torrentRequest->category->cartoontv_meta && ($torrentRequest->tmdb || $torrentRequest->tmdb != 0)) {
+            $tmdbScraper->cartoontv($torrentRequest->tmdb);
         }
 
         return \to_route('request', ['id' => $torrentRequest->id])

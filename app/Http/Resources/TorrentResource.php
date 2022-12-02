@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Movie;
 use App\Models\Cartoon;
 use App\Models\Tv;
+use App\Models\Cartoontv;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TorrentResource extends JsonResource
@@ -26,6 +27,10 @@ class TorrentResource extends JsonResource
 
         if ($this->category->cartoon_meta && ($this->tmdb !== 0)) {
             $meta = Cartoon::with(['genres:name'])->where('id', '=', $this->tmdb)->first();
+        }
+
+        if ($this->category->cartoontv_meta && ($this->tmdb !== 0)) {
+            $meta = Cartoontv::with(['genres:name'])->where('id', '=', $this->tmdb)->first();
         }
 
         return [

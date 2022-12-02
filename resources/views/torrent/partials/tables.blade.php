@@ -140,7 +140,7 @@
 
                                                         @if (config('other.freeleech') == '1')
                                                             <span class="badge-extra text-bold">
-                                                                <i class="{{ config('other.font-awesome') }} fa-globe text-blue"></i>
+                                                                <i class="{{ config('other.font-awesome') }} fa-star text-gold" data-toggle="tooltip" data-html="true" title="<p>{{ $torrent->free }}% {{ __('torrent.freeleech') }}</p>"></i>
                                                             </span>
                                                         @endif
                                                     @else

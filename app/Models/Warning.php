@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,5 +53,13 @@ class Warning extends Model
             'username' => 'System',
             'id'       => '1',
         ]);
+    }
+
+    /**
+     * Active Warnings
+     */
+    public function scopeActive($query): Builder
+    {
+        return $query->where('active', '=', 1);
     }
 }

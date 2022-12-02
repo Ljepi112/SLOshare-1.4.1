@@ -1,5 +1,10 @@
 @extends('layout.default')
 
+@section('title')
+    <title>{{ __('staff.torrent-categories') }} - {{ __('staff.staff-dashboard') }}</title>
+@endsection
+
+
 @section('breadcrumbs')
     <li class="breadcrumbV2">
         <a href="{{ route('staff.dashboard.index') }}" class="breadcrumb__link">
@@ -36,6 +41,7 @@
                     <th>{{ __('staff.movie-meta') }}</th>
                     <th>{{ __('staff.tv-meta') }}</th>
                     <th>{{ __('staff.cartoons-meta') }}</th>
+                    <th>{{ __('staff.cartoontvs-meta') }}</th>
                     <th>{{ __('staff.game-meta') }}</th>
                     <th>{{ __('staff.music-meta') }}</th>
                     <th>{{ __('staff.no-meta') }}</th>
@@ -77,6 +83,13 @@
                             </td>
                             <td>
                                 @if ($category->cartoon_meta)
+                                    <i class="{{ config('other.font-awesome') }} fa-check text-green"></i>
+                                @else
+                                    <i class="{{ config('other.font-awesome') }} fa-times text-red"></i>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($category->cartoontv_meta)
                                     <i class="{{ config('other.font-awesome') }} fa-check text-green"></i>
                                 @else
                                     <i class="{{ config('other.font-awesome') }} fa-times text-red"></i>

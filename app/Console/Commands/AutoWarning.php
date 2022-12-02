@@ -3,10 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\History;
-use App\Models\PrivateMessage;
 use App\Models\Warning;
+use App\Notifications\UserWarning;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @see \Tests\Unit\Console\Commands\AutoWarningTest
@@ -68,17 +69,21 @@ class AutoWarning extends Command
                         $hr->user->hitandruns++;
                         $hr->user->save();
 
-                        // Send Private Message
-                        $pm = new PrivateMessage();
-                        $pm->sender_id = 1;
-                        $pm->receiver_id = $hr->user->id;
-                        $pm->subject = 'Prejeto opozorilo Hit and Run';
-                        $pm->message = 'Prejeli ste avtomatsko [b]OPOZORILO[/b] iz sistema, ker [b]niste upoštevali pravil Hit and Run v zvezi s Torrentom '.$hr->torrent->name.'[/b]
-                            [color=red][b]TO JE AVTOMATIZOVANO SISTEMSKO SPOROČILO, PROSIMO, NE ODGOVARAJTE![/b][/color]';
-                        $pm->save();
+                        // Send Notifications
+                        $hr->user->notify(new UserWarning($hr->user, $hr->torrent));
 
                         $hr->save();
                     }
+                }
+            }
+
+            // Calculate User Warning Count and Disable DL Priv If Required.
+            $warnings = Warning::with('warneduser')->select(DB::raw('user_id, count(*) as value'))->where('active', '=', 1)->groupBy('user_id')->having('value', '>=', \config('hitrun.max_warnings'))->get();
+
+            foreach ($warnings as $warning) {
+                if ($warning->warneduser->can_download === 1) {
+                    $warning->warneduser->can_download = 0;
+                    $warning->warneduser->save();
                 }
             }
         }

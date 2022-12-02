@@ -93,7 +93,7 @@
                                         })"
                                         class="form__button form__button--text"
                                     >
-                                        Unwatch
+                                        Prekliči ogled
                                     </button>
                                 </form>
                             </li>

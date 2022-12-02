@@ -97,6 +97,11 @@ trait TorrentFilter
                     ->whereIn('category_id', Category::select('id')->where('cartoon_meta', '=', 1))
                     ->whereIn('tmdb', DB::table('cartoon_genre')->select('cartoon_id')->whereIn('genre_id', $genres))
                 )
+                ->orWhere(
+                    fn ($query) => $query
+                    ->whereIn('category_id', Category::select('id')->where('cartoontv_meta', '=', 1))
+                    ->whereIn('tmdb', DB::table('genre_cartoontv')->select('cartoontv_id')->whereIn('genre_id', $genres))
+                )
             );
     }
 
@@ -145,7 +150,10 @@ trait TorrentFilter
             ->whereIn('tmdb', DB::table('collection_tv')->select('tv_id')->where('collection_id', '=', $collectionId))
 
             ->whereIn('category_id', Category::select('id')->where('cartoon_meta', '=', 1))
-            ->whereIn('tmdb', DB::table('cartoon_collection')->select('cartoon_id')->where('collection_id', '=', $collectionId));
+            ->whereIn('tmdb', DB::table('cartoon_collection')->select('cartoon_id')->where('collection_id', '=', $collectionId))
+
+            ->whereIn('category_id', Category::select('id')->where('cartoontv_meta', '=', 1))
+            ->whereIn('tmdb', DB::table('collection_cartoontv')->select('cartoontv_id')->where('collection_id', '=', $collectionId));
     }
 
 
